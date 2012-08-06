@@ -11,7 +11,7 @@ ClassName=TProjectFilesNode
 
 [Project\ChildNodes\Node0\ChildNodes\Node0]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]zeit.py
+FileName=$[Project-Path]app\zeit.py
 
 [Project\ChildNodes\Node0\ChildNodes]
 Count=1
