@@ -14,12 +14,6 @@ counter = 0
 period = None
 
 def update_time(root):
-    '''global counter
-    
-    counter += 1
-    if (counter % 10) == 0:
-        val = int(time_content.get())
-        time_content.set(str(val + 1))'''
     p = str(period)
     if p != time_content.get():
         time_content.set(p)
