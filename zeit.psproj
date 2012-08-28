@@ -11,18 +11,22 @@ ClassName=TProjectFilesNode
 
 [Project\ChildNodes\Node0\ChildNodes\Node0]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]app\misc.py
+FileName=$[Project-Path]app\res\__init__.py
 
 [Project\ChildNodes\Node0\ChildNodes\Node1]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]app\timelib.py
+FileName=$[Project-Path]app\misc.py
 
 [Project\ChildNodes\Node0\ChildNodes\Node2]
+ClassName=TProjectFileNode
+FileName=$[Project-Path]app\timelib.py
+
+[Project\ChildNodes\Node0\ChildNodes\Node3]
 ClassName=TProjectFileNode
 FileName=$[Project-Path]app\zeit.py
 
 [Project\ChildNodes\Node0\ChildNodes]
-Count=3
+Count=4
 
 [Project\ChildNodes\Node1]
 ClassName=TProjectRunConfiguationsNode

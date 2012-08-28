@@ -61,19 +61,9 @@ class TimeStamp:
     ############################################################################
     
     def _split_length(self):
-        minutes, seconds = divmod(self.length.seconds, 60)
-        
-        if minutes >= 60:
-            hours, minutes = divmod(minutes, 60)
-        else:
-            hours = 0
-            
-        days = self.length.days
-        
-        if days >= 7:
-            weeks, days = divmod(days, 7)
-        else:
-            weeks = 0
+        minutes, seconds = _split_times(self.length.seconds, 60)
+        hours, minutes = _split_times(minutes, 60)
+        weeks, days = _split_times(self.length.days, 7)
             
         self._weeks = weeks
         self._days = days
@@ -87,10 +77,10 @@ class TimeStamp:
             self._ended = True
             
     def stop():
-        pass
+        raise NotImplementedError
     
     def resume(self):
-        pass
+        raise NotImplementedError
 
 class Period(TimeStamp):
     def __str__(self):
@@ -100,15 +90,26 @@ class Period(TimeStamp):
             self.seconds
         )
     
-class Pause(TimeStamp):
-    def __str__(self):
-        pass
-    
-class Day:
+class Working(Period):
     pass
 
-class Project:
+class Pause(Period):
     pass
+    
+class Day(TimeStamp):
+    pass
+
+class Project(TimeStamp):
+    def __init__(self):
+        super().__init__()
+        #...
 
 class SubProject(Project):
     pass
+
+def _split_times(t, length):
+    if t >= length:
+        val, t = divmod(t, length)
+    else:
+        val = 0
+    return val, t
