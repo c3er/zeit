@@ -4,7 +4,12 @@
 import time
 import datetime
 
+import tkinter
+import tkinter.ttk as ttk
+
 from misc import *
+
+UPDATE_TIME = 100
 
 class TimeStamp:
     def __init__(self):
@@ -75,12 +80,6 @@ class TimeStamp:
         if not self._ended:
             self._current = datetime.datetime.today()
             self._ended = True
-            
-    def stop():
-        raise NotImplementedError
-    
-    def resume(self):
-        raise NotImplementedError
 
 class Period(TimeStamp):
     def __str__(self):
@@ -96,16 +95,90 @@ class Working(Period):
 class Pause(Period):
     pass
     
-class Day(TimeStamp):
-    pass
+class WorkingDay(Period):
+    def __init__(self):
+        super().__init__()
+        self.periods = []
+        self.periods.append(Working())
+        self.paused = False
+        
+    # Properties ###############################################################
+    def get_current_period(self):
+        if self.periods:
+            return self.periods[-1]
+        else:
+            return None
+        
+    def get_length(self):
+        td = datetime.timedelta()
+        
+        for p in self.periods:
+            if isinstance(p, Working):
+                td += p.length
+                
+        return td
+        
+    current_period = property(get_current_period)
+    length = property(get_length)
+    ############################################################################
+            
+    def pause(self):
+        if not self.paused:
+            self.current_period.end()
+            self.periods.append(Pause())
+            self.paused = True
+    
+    def resume(self):
+        if self.paused:
+            self.current_period.end()
+            self.periods.append(Working())
+            self.paused = False
 
 class Project(TimeStamp):
     def __init__(self):
         super().__init__()
-        #...
+        self.subprojects = []
+        self.working_days = []
+        
+    def __str__(self):
+        return '{:02d}:{:02d}:{:02d}:{:02d}:{:02d}'.format(
+            self.weeks,
+            self.days,
+            self.hours,
+            self.minutes,
+            self.seconds
+        )
+        
+    # Properties ###############################################################
+    def get_length(self):
+        td = datetime.timedelta()
+        
+        for sp in self.subprojects:
+            td += sp.length
+            
+        for wd in self.working_days:
+            td += wd.length
+            
+        return td
+    
+    length = property(get_length)
+    ############################################################################
+    
+    def start(self):
+        pass
 
 class SubProject(Project):
     pass
+
+class TimeWidget:
+    def __init__(self, parent, project):
+        self.frame = ttk.Frame(parent)
+        #...
+        self.frame.after(UPDATE_TIME, curry(self.update, self.frame))
+    
+    def update(self):
+        #...
+        self.frame.after(UPDATE_TIME, curry(self.update, self.frame))
 
 def _split_times(t, length):
     if t >= length:

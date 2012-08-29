@@ -32,8 +32,7 @@
       (Oder von Links nach rechts)
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <node TEXT="Abschnitt / Pause" ID="ID_977305979" CREATED="1344214605960" MODIFIED="1344214626338">
 <node TEXT="hh:mm" ID="ID_219867079" CREATED="1344371188960" MODIFIED="1344371226477"/>
 <node TEXT="Wenn Pause ist, wird die Pausenzeit von Null hochgez&#xe4;hlt und&#xa;die anderen Zeiten werden angehalten" ID="ID_53246947" CREATED="1344214778644" MODIFIED="1344215464567"/>
@@ -87,6 +86,8 @@
 <node TEXT="Projekt" ID="ID_732915188" CREATED="1344276956286" MODIFIED="1344276961188">
 <node TEXT="Neues Projekt" ID="ID_131579162" CREATED="1344213285124" MODIFIED="1344213293660"/>
 <node TEXT="Projekt &#xf6;ffnen" ID="ID_1590049415" CREATED="1344272678589" MODIFIED="1344272684418"/>
+<node TEXT="Projekt speichern" ID="ID_215680502" CREATED="1346197621340" MODIFIED="1346197628624"/>
+<node TEXT="Projekt speichern unter" ID="ID_1074832523" CREATED="1346197785233" MODIFIED="1346197796014"/>
 <node TEXT="Projekt schlie&#xdf;en" ID="ID_386192765" CREATED="1344263971524" MODIFIED="1344276853479"/>
 </node>
 <node TEXT="Unterprojekt" ID="ID_590827364" CREATED="1344276961659" MODIFIED="1344276965493">
