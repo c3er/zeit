@@ -4,11 +4,15 @@
 import tkinter
 import tkinter.ttk as ttk
 
+import controller
 import timelib
 import res
 from misc import *
 
 UPDATE_TIME = 100
+
+MIN_SIZE_X = 250
+MIN_SIZE_Y = 100
 
 period_button = None
 
@@ -45,6 +49,9 @@ def update_time(root):
         
     root.after(UPDATE_TIME, curry(update_time, root))
     
+def adjust_state(con):
+    pass
+    
 def start_stop_period():
     pass
 
@@ -74,6 +81,15 @@ def continue_subproject():
 
 def close_subproject():
     pass
+
+def start_pause_day():
+    pass
+
+def stop_day():
+    pass
+
+def attach_day_to_subproject():
+    pass
 ################################################################################
 
 # Appearence ###################################################################
@@ -85,7 +101,7 @@ def main_menu(root):
     file_menu = tkinter.Menu(menu)
     menu.add_cascade(label = res.MENU_FILE, menu = file_menu)
     file_menu.add_command(
-        label = res.MENU_END,
+        label = res.STOP,
         command = root.destroy,
         accelerator = 'Alt+F4'
     )
@@ -132,6 +148,22 @@ def main_menu(root):
         label = res.MENU_CLOSE_SUBPROJECT,
         command = close_subproject
     )
+    
+    day_menu = tkinter.Menu(menu)
+    menu.add_cascade(label = res.DAY, menu = day_menu)
+    day_menu.add_command(
+        label = res.MENU_START_PAUSE_DAY,
+        command = start_pause_day
+    )
+    day_menu.add_command(
+        label = res.STOP,
+        command = stop_day
+    )
+    day_menu.add_separator()
+    day_menu.add_command(
+        label = res.MENU_ATTACH_DAY_TO_SUBPROJECT,
+        command = attach_day_to_subproject
+    )
 
 def toolbar(parent):
     global period_button
@@ -166,6 +198,7 @@ def bind_events(root):
 
 if __name__ == '__main__':
     root = tkinter.Tk()
+    root.minsize(MIN_SIZE_X, MIN_SIZE_Y)
     root.wm_title(res.APP_TITLE)
     period = timelib.Working()  # XXX
     content(root).pack(fill = 'both')

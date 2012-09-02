@@ -14,8 +14,8 @@ UPDATE_TIME = 100
 class TimeStamp:
     def __init__(self):
         self.starttime = datetime.datetime.today()
+        self.stoped = False
         self._current = self.starttime
-        self._ended = False
         
         self._weeks = 0
         self._days = 0
@@ -28,7 +28,7 @@ class TimeStamp:
     
     # Properties ###############################################################
     def get_current(self):
-        if not self._ended:
+        if not self.stoped:
             self._current = datetime.datetime.today()
         return self._current
     
@@ -76,12 +76,16 @@ class TimeStamp:
         self._minutes = minutes
         self._seconds = seconds
     
-    def end(self):
-        if not self._ended:
+    def stop(self):
+        if not self.stoped:
             self._current = datetime.datetime.today()
-            self._ended = True
+            self.stoped = True
 
 class Period(TimeStamp):
+    def __init__(self, working_day = None):
+        super().__init__()
+        self.working_day = working_day
+        
     def __str__(self):
         return '{:02d}:{:02d}:{:02d}'.format(
             self.hours,
@@ -96,11 +100,12 @@ class Pause(Period):
     pass
     
 class WorkingDay(Period):
-    def __init__(self):
+    def __init__(self, project):
         super().__init__()
         self.periods = []
-        self.periods.append(Working())
+        self.periods.append(Working(self))
         self.paused = False
+        self.project = project
         
     # Properties ###############################################################
     def get_current_period(self):
@@ -111,11 +116,9 @@ class WorkingDay(Period):
         
     def get_length(self):
         td = datetime.timedelta()
-        
         for p in self.periods:
             if isinstance(p, Working):
                 td += p.length
-                
         return td
         
     current_period = property(get_current_period)
@@ -125,18 +128,23 @@ class WorkingDay(Period):
     def pause(self):
         if not self.paused:
             self.current_period.end()
-            self.periods.append(Pause())
+            self.periods.append(Pause(self))
             self.paused = True
     
     def resume(self):
         if self.paused:
             self.current_period.end()
-            self.periods.append(Working())
+            self.periods.append(Working(self))
             self.paused = False
+            
+    def stop(self):
+        self.current_period.stop()
+        super().stop()
 
 class Project(TimeStamp):
-    def __init__(self):
+    def __init__(self, name):
         super().__init__()
+        self.name = name
         self.subprojects = []
         self.working_days = []
         
@@ -152,33 +160,46 @@ class Project(TimeStamp):
     # Properties ###############################################################
     def get_length(self):
         td = datetime.timedelta()
-        
         for sp in self.subprojects:
             td += sp.length
-            
         for wd in self.working_days:
             td += wd.length
-            
         return td
     
     length = property(get_length)
     ############################################################################
     
-    def start(self):
+    def start(self, subproject = None):
         pass
 
 class SubProject(Project):
-    pass
+    def __init__(self, name, project):
+        super().__init__(name)
+        self.project = project
 
 class TimeWidget:
     def __init__(self, parent, project):
         self.frame = ttk.Frame(parent)
         #...
-        self.frame.after(UPDATE_TIME, curry(self.update, self.frame))
+        self.frame.after(UPDATE_TIME, self._cyclic_update)
+        
+    def _build_display(self, label, period):
+        lf = ttk.Labelframe(self.frame, text = label)
+        
+        content = tkinter.StringVar()
+        tkinter.Label(lf,
+            background = 'black',
+            foreground = 'yellow',
+            font = ('Consolas', 20, 'bold'),
+            textvariable = content
+        ).pack()
+        content.set(str(period))
+        
+        return lf, content
     
-    def update(self):
+    def _cyclic_update(self):
         #...
-        self.frame.after(UPDATE_TIME, curry(self.update, self.frame))
+        self.frame.after(UPDATE_TIME, self._cyclic_update)
 
 def _split_times(t, length):
     if t >= length:

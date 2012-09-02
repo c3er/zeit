@@ -71,7 +71,11 @@
 <node TEXT="Wird in dem jeweiligen Datensatz vom Ende angezeigt" ID="ID_1989572635" CREATED="1346018255904" MODIFIED="1346018290182"/>
 </node>
 </node>
-<node TEXT="Spalten" ID="ID_111039168" CREATED="1346018612256" MODIFIED="1346018618632"/>
+<node TEXT="Spalten" ID="ID_111039168" CREATED="1346018612256" MODIFIED="1346018618632">
+<node TEXT="Datum" ID="ID_787527928" CREATED="1346575870744" MODIFIED="1346575878103"/>
+<node TEXT="Uhrzeit" ID="ID_256128419" CREATED="1346575879306" MODIFIED="1346575882339"/>
+<node TEXT="..." ID="ID_1682927852" CREATED="1346576492154" MODIFIED="1346576494164"/>
+</node>
 </node>
 </node>
 <node TEXT="Button-Leiste" ID="ID_255096604" CREATED="1344213036435" MODIFIED="1346018448139">
@@ -97,10 +101,16 @@
 <node TEXT="Unterprojekt fortsetzen" ID="ID_1410142747" CREATED="1344276888031" MODIFIED="1344276904144"/>
 <node TEXT="Unterprojekt schlie&#xdf;en" ID="ID_1507382815" CREATED="1344263964340" MODIFIED="1344276884950"/>
 </node>
+<node TEXT="Tag" ID="ID_1086022171" CREATED="1346581979635" MODIFIED="1346581982773">
+<node TEXT="Starten/Pausieren" ID="ID_424480930" CREATED="1346581985819" MODIFIED="1346581995442"/>
+<node TEXT="Beenden" ID="ID_127159103" CREATED="1346581999897" MODIFIED="1346582018870"/>
+<node TEXT="Zum Unterprojekt zuordnen..." ID="ID_1794875956" CREATED="1346582034256" MODIFIED="1346582053868"/>
+</node>
 </node>
 <node TEXT="Sonstiges" ID="ID_954277103" CREATED="1344263980715" MODIFIED="1344263991000">
 <node TEXT="Jedes Projekt wird in eine eigene Datei gespeichert" ID="ID_1931952674" CREATED="1344273009577" MODIFIED="1344273023946"/>
 <node TEXT="Beim Programmstart wird das zuletzt ge&#xf6;ffnete Projekt automatisch wieder ge&#xf6;ffnet" ID="ID_1182355663" CREATED="1344366846239" MODIFIED="1344366887641"/>
+<node TEXT="Wenn das Programm zum ersten mal gestartet wird oder das Projekt beim letzten mal geschlossen wurde, wird ein neues Projekt mit dem vorl&#xe4;ufigen Namen &quot;Unbenannt&quot; erstellt" ID="ID_1073066797" CREATED="1346578069194" MODIFIED="1346578210326"/>
 </node>
 </node>
 </node>
