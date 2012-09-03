@@ -200,6 +200,18 @@ class TimeWidget:
     def _cyclic_update(self):
         #...
         self.frame.after(UPDATE_TIME, self._cyclic_update)
+        
+    def start(self):
+        pass
+    
+    def stop(self):
+        pass
+    
+    def pause(self):
+        pass
+    
+    def resume(self):
+        pass
 
 def _split_times(t, length):
     if t >= length:

@@ -9,16 +9,17 @@ import timelib
 import res
 from misc import *
 
-UPDATE_TIME = 100
+#UPDATE_TIME = 100
 
 MIN_SIZE_X = 250
 MIN_SIZE_Y = 100
 
+con = None
+
 period_button = None
 
-time_content = None
-counter = 0
-period = None
+#time_content = None
+#period = None
 
 # Helper functions #############################################################
 def create_button(frame, label, command):
@@ -26,7 +27,7 @@ def create_button(frame, label, command):
     button.pack(side = 'left')
     return button
 
-def create_time_display(parent, label, period):
+'''def create_time_display(parent, label, period):
     lf = ttk.Labelframe(parent, text = label)
     
     content = tkinter.StringVar()
@@ -38,16 +39,16 @@ def create_time_display(parent, label, period):
     ).pack()
     content.set(str(period))
     
-    return lf, content
+    return lf, content'''
 ################################################################################
 
 # Handlers #####################################################################
-def update_time(root):
+'''def update_time(root):
     p = str(period)
     if p != time_content.get():
         time_content.set(p)
         
-    root.after(UPDATE_TIME, curry(update_time, root))
+    root.after(UPDATE_TIME, curry(update_time, root))'''
     
 def adjust_state(con):
     pass
@@ -98,6 +99,7 @@ def main_menu(root):
     menu = tkinter.Menu(root)
     root.config(menu = menu)
     
+    # File menu
     file_menu = tkinter.Menu(menu)
     menu.add_cascade(label = res.MENU_FILE, menu = file_menu)
     file_menu.add_command(
@@ -106,6 +108,7 @@ def main_menu(root):
         accelerator = 'Alt+F4'
     )
     
+    # Project menu
     project_menu = tkinter.Menu(menu)
     menu.add_cascade(label = res.MENU_PROJECT, menu = project_menu)
     project_menu.add_command(
@@ -134,6 +137,7 @@ def main_menu(root):
         accelerator = 'Strg+W'
     )
     
+    # Subproject menu
     subproject_menu = tkinter.Menu(menu)
     menu.add_cascade(label = res.MENU_SUBPROJECT, menu = subproject_menu)
     subproject_menu.add_command(
@@ -149,6 +153,7 @@ def main_menu(root):
         command = close_subproject
     )
     
+    # Day menu
     day_menu = tkinter.Menu(menu)
     menu.add_cascade(label = res.DAY, menu = day_menu)
     day_menu.add_command(
@@ -176,17 +181,17 @@ def toolbar(parent):
     return frame
 
 def content(root):
-    global time_content
+    #global time_content
     
-    frame = ttk.Frame(root)
+    #frame = ttk.Frame(root)
     
     main_menu(root)
-    toolbar(frame).pack(anchor = 'n', fill = 'x', padx = 2, pady = 2)
+    toolbar(root).pack(anchor = 'n', fill = 'x')
     
-    td, time_content = create_time_display(frame, 'Zeit', period)
-    td.pack(anchor = 'n', padx = 2, pady = 2)
+    '''td, time_content = create_time_display(frame, 'Zeit', period)
+    td.pack(anchor = 'n', padx = 2, pady = 2)'''
     
-    return frame
+    #return frame
 
 def bind_events(root):
     root.bind('<Control-n>', lambda event: new_project())
@@ -197,11 +202,16 @@ def bind_events(root):
 ################################################################################
 
 if __name__ == '__main__':
+    # Initializing
     root = tkinter.Tk()
     root.minsize(MIN_SIZE_X, MIN_SIZE_Y)
     root.wm_title(res.APP_TITLE)
-    period = timelib.Working()  # XXX
-    content(root).pack(fill = 'both')
+    #period = timelib.Working()  # XXX
+    #content(root)#.pack(fill = 'both')
+    main_menu(root)
+    toolbar(root).pack(anchor = 'n', fill = 'x')
     bind_events(root)
-    root.after(UPDATE_TIME, curry(update_time, root))
+    con = controller.Controller(root, adjust_state)
+    #root.after(UPDATE_TIME, curry(update_time, root))
+    
     root.mainloop()
