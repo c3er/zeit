@@ -14,6 +14,7 @@ class Controller:
     def __init__(self, root, state_handler):
         self.root = root
         self.state_handler = state_handler
+        self.modified = False
         self.project = None
         self.time_widget = None
         self.new_project()
@@ -29,6 +30,19 @@ class Controller:
         pass
     
     def close_project(self):
+        pass
+    
+    def start_time(self):
+        self.project.start()
+        self.modified = True
+    
+    def stop_time(self):
+        pass
+    
+    def pause_time(self):
+        pass
+    
+    def resume_time(self):
         pass
     
     def update(self):

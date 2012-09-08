@@ -53,7 +53,7 @@ def create_button(frame, label, command):
 def adjust_state(con):
     pass
     
-def start_stop_period():
+def start_pause_period():
     pass
 
 def end_day():
@@ -175,7 +175,7 @@ def toolbar(parent):
     
     frame = ttk.Frame(parent)
     
-    period_button = create_button(frame, res.BUTTON_START, start_stop_period)
+    period_button = create_button(frame, res.BUTTON_START, start_pause_period)
     create_button(frame, res.BUTTON_END_DAY, end_day)
     
     return frame

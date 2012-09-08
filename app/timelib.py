@@ -64,11 +64,18 @@ class TimeStamp:
     minutes = property(get_minutes)
     seconds = property(get_seconds)
     ############################################################################
+
+    def _split_times(self, t, length):
+        if t >= length:
+            val, t = divmod(t, length)
+        else:
+            val = 0
+        return val, t
     
     def _split_length(self):
-        minutes, seconds = _split_times(self.length.seconds, 60)
-        hours, minutes = _split_times(minutes, 60)
-        weeks, days = _split_times(self.length.days, 7)
+        minutes, seconds = self._split_times(self.length.seconds, 60)
+        hours, minutes = self._split_times(minutes, 60)
+        weeks, days = self._split_times(self.length.days, 7)
             
         self._weeks = weeks
         self._days = days
@@ -103,7 +110,6 @@ class WorkingDay(Period):
     def __init__(self, project):
         super().__init__()
         self.periods = []
-        self.periods.append(Working(self))
         self.paused = False
         self.project = project
         
@@ -124,6 +130,9 @@ class WorkingDay(Period):
     current_period = property(get_current_period)
     length = property(get_length)
     ############################################################################
+    
+    def start(self):
+        self.periods.append(Working(self))
             
     def pause(self):
         if not self.paused:
@@ -147,6 +156,12 @@ class Project(TimeStamp):
         self.name = name
         self.subprojects = []
         self.working_days = []
+        self.working_days.append(WorkingDay(self))
+        self.current_project = self
+        
+        # The start/stop mechanic from the TimeStamp class
+        # is not of interest here
+        self.stoped = True
         
     def __str__(self):
         return '{:02d}:{:02d}:{:02d}:{:02d}:{:02d}'.format(
@@ -166,11 +181,30 @@ class Project(TimeStamp):
             td += wd.length
         return td
     
+    def get_current_day(self):
+        return self.current_project.working_days[-1]
+    
     length = property(get_length)
+    current_day = property(get_current_day)
     ############################################################################
     
     def start(self, subproject = None):
-        pass
+        '''Starts a new working day of the project.'''
+        if self.stoped:
+            #self.current_project = subproject if subproject else self
+            self.current_day.start()
+            self.stoped = False
+    
+    def pause(self):
+        self.current_day.pause()
+    
+    def resume(self):
+        self.current_day.resume()
+    
+    def stop(self):
+        if not self.stoped:
+            self.current_day.stop()
+            self.stoped = True
 
 class SubProject(Project):
     def __init__(self, name, project):
@@ -179,12 +213,14 @@ class SubProject(Project):
 
 class TimeWidget:
     def __init__(self, parent, project):
-        self.frame = ttk.Frame(parent)
+        self.frame = None
+        self.project = project
         #...
+        self.update()
         self.frame.after(UPDATE_TIME, self._cyclic_update)
         
-    def _build_display(self, label, period):
-        lf = ttk.Labelframe(self.frame, text = label)
+    def _build_display(self, parent, label, period):
+        lf = ttk.Labelframe(parent, text = label)
         
         content = tkinter.StringVar()
         tkinter.Label(lf,
@@ -197,25 +233,15 @@ class TimeWidget:
         
         return lf, content
     
+    def _build_frame(self, frame, project):
+        period_display, 
+    
     def _cyclic_update(self):
         #...
         self.frame.after(UPDATE_TIME, self._cyclic_update)
         
-    def start(self):
-        pass
-    
-    def stop(self):
-        pass
-    
-    def pause(self):
-        pass
-    
-    def resume(self):
-        pass
-
-def _split_times(t, length):
-    if t >= length:
-        val, t = divmod(t, length)
-    else:
-        val = 0
-    return val, t
+    def update(self):
+        if self.frame is not None:
+            self.frame.destroy()
+        self.frame = ttk.Frame()
+        self._build_frame(self.frame, self.project)
