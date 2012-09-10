@@ -35,6 +35,7 @@ class Controller:
     def start_time(self):
         self.project.start()
         self.modified = True
+        print('Time started')
     
     def stop_time(self):
         pass

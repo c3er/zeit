@@ -1,20 +1,19 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import time
 import datetime
-
 import tkinter
 import tkinter.ttk as ttk
 
+import res
 from misc import *
 
 UPDATE_TIME = 100
 
 class TimeStamp:
     def __init__(self):
-        self.starttime = datetime.datetime.today()
-        self.stoped = False
+        self.starttime = datetime.timedelta()
+        self.stoped = True
         self._current = self.starttime
         
         self._weeks = 0
@@ -82,6 +81,12 @@ class TimeStamp:
         self._hours = hours
         self._minutes = minutes
         self._seconds = seconds
+        
+    def start(self):
+        if self.stoped:
+            self.starttime = datetime.datetime.today()
+            self._current = self.starttime
+            self.stoped = False
     
     def stop(self):
         if not self.stoped:
@@ -114,11 +119,21 @@ class WorkingDay(Period):
         self.project = project
         
     # Properties ###############################################################
-    def get_current_period(self):
-        if self.periods:
-            return self.periods[-1]
-        else:
-            return None
+    def _get_current_period(self, cls):
+        for p in reversed(self.periods):
+            if isinstance(p, cls):
+                return p
+            
+        # There is no period of interst till now...
+        period = cls(self)
+        self.periods.append(period)
+        return period
+    
+    def get_current_working(self):
+        return self._get_current_period(Working)
+            
+    def get_current_pause(self):
+        return self._get_current_period(Pause)
         
     def get_length(self):
         td = datetime.timedelta()
@@ -127,27 +142,29 @@ class WorkingDay(Period):
                 td += p.length
         return td
         
-    current_period = property(get_current_period)
+    current_working = property(get_current_working)
+    current_pause = property(get_current_pause)
     length = property(get_length)
     ############################################################################
     
     def start(self):
         self.periods.append(Working(self))
+        # XXX Logical error has to be fixed!!!
             
     def pause(self):
         if not self.paused:
-            self.current_period.end()
+            self.current_working.end()
             self.periods.append(Pause(self))
             self.paused = True
     
     def resume(self):
         if self.paused:
-            self.current_period.end()
+            self.current_working.end()
             self.periods.append(Working(self))
             self.paused = False
             
     def stop(self):
-        self.current_period.stop()
+        self.current_working.stop()
         super().stop()
 
 class Project(TimeStamp):
@@ -158,6 +175,7 @@ class Project(TimeStamp):
         self.working_days = []
         self.working_days.append(WorkingDay(self))
         self.current_project = self
+        self.parent_project = None
         
         # The start/stop mechanic from the TimeStamp class
         # is not of interest here
@@ -191,7 +209,6 @@ class Project(TimeStamp):
     def start(self, subproject = None):
         '''Starts a new working day of the project.'''
         if self.stoped:
-            #self.current_project = subproject if subproject else self
             self.current_day.start()
             self.stoped = False
     
@@ -209,39 +226,77 @@ class Project(TimeStamp):
 class SubProject(Project):
     def __init__(self, name, project):
         super().__init__(name)
-        self.project = project
+        self.parent_project = project
 
-class TimeWidget:
-    def __init__(self, parent, project):
+# GUI related ##################################################################
+class DisplayContainer:
+    def __init__(self, parent, label, period):
         self.frame = None
-        self.project = project
-        #...
+        self.label = label
+        self.parent = parent
+        self.content = None
+        self.period = period
+        
         self.update()
-        self.frame.after(UPDATE_TIME, self._cyclic_update)
-        
-    def _build_display(self, parent, label, period):
-        lf = ttk.Labelframe(parent, text = label)
-        
-        content = tkinter.StringVar()
-        tkinter.Label(lf,
-            background = 'black',
-            foreground = 'yellow',
-            font = ('Consolas', 20, 'bold'),
-            textvariable = content
-        ).pack()
-        content.set(str(period))
-        
-        return lf, content
-    
-    def _build_frame(self, frame, project):
-        period_display, 
     
     def _cyclic_update(self):
-        #...
+        p = str(self.period)
+        if p != self.content.get():
+            self.content.set(p)
+
         self.frame.after(UPDATE_TIME, self._cyclic_update)
         
     def update(self):
         if self.frame is not None:
             self.frame.destroy()
-        self.frame = ttk.Frame()
-        self._build_frame(self.frame, self.project)
+        self.frame = ttk.Labelframe(self.parent, text = self.label)
+        
+        self.content = tkinter.StringVar()
+        tkinter.Label(self.frame,
+            background = 'black',
+            foreground = 'yellow',
+            font = ('Consolas', 20, 'bold'),
+            textvariable = self.content
+        ).pack()
+        self.content.set(str(self.period))
+        
+        self.frame.pack(anchor = 'e')
+        self.frame.after(UPDATE_TIME, self._cyclic_update)
+
+class TimeWidget:
+    def __init__(self, parent, project):
+        self.frame = None
+        self.parent = parent
+        self.project = project
+        self.displays = []
+        
+        self.update()
+    
+    def _build_frame(self):
+        day = self.project.current_day
+        working = day.current_working
+        pause = day.current_pause
+        
+        if not self.displays:
+            self.displays.append(
+                DisplayContainer(self.frame, res.DISPLAY_PERIOD, working)
+            )
+            self.displays.append(
+                DisplayContainer(self.frame, res.DISPLAY_PAUSE, pause)
+            )
+            self.displays.append(DisplayContainer(self.frame, res.DAY, day))
+            
+            project = day.project
+            while project is not None:
+                self.displays.append(
+                    DisplayContainer(self.frame, project.name, project)
+                )
+                project = project.parent_project
+        
+    def update(self):
+        if self.frame is not None:
+            self.frame.destroy()
+        self.frame = ttk.Frame(self.parent)
+        self._build_frame()
+        self.frame.pack()
+################################################################################

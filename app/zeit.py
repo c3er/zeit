@@ -54,7 +54,7 @@ def adjust_state(con):
     pass
     
 def start_pause_period():
-    pass
+    con.start_time()
 
 def end_day():
     pass

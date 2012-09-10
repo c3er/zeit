@@ -32,11 +32,13 @@
       (Oder von Links nach rechts)
     </p>
   </body>
-</html>
-</richcontent>
-<node TEXT="Abschnitt / Pause" ID="ID_977305979" CREATED="1344214605960" MODIFIED="1344214626338">
-<node TEXT="hh:mm" ID="ID_219867079" CREATED="1344371188960" MODIFIED="1344371226477"/>
-<node TEXT="Wenn Pause ist, wird die Pausenzeit von Null hochgez&#xe4;hlt und&#xa;die anderen Zeiten werden angehalten" ID="ID_53246947" CREATED="1344214778644" MODIFIED="1344215464567"/>
+</html></richcontent>
+<node TEXT="Abschnitt" ID="ID_977305979" CREATED="1344214605960" MODIFIED="1347229955813">
+<node TEXT="hh:mm" ID="ID_219867079" CREATED="1344371188960" MODIFIED="1347230839948"/>
+</node>
+<node TEXT="Pause" ID="ID_1754837730" CREATED="1347229946606" MODIFIED="1347229950108">
+<node TEXT="hh:mm" ID="ID_257143692" CREATED="1344371188960" MODIFIED="1347230839948"/>
+<node TEXT="Wenn Pause ist, wird die Pausenzeit von Null hochgez&#xe4;hlt und&#xa;die anderen Zeiten werden angehalten" ID="ID_53246947" CREATED="1344214778644" MODIFIED="1347230820597"/>
 </node>
 <node TEXT="Tag" ID="ID_1728740554" CREATED="1344214628136" MODIFIED="1344214641667">
 <node TEXT="hh:mm" ID="ID_610077942" CREATED="1344371231185" MODIFIED="1344371237473"/>
