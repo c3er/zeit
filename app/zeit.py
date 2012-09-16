@@ -9,8 +9,6 @@ import timelib
 import res
 from misc import *
 
-#UPDATE_TIME = 100
-
 MIN_SIZE_X = 250
 MIN_SIZE_Y = 100
 
@@ -18,43 +16,32 @@ con = None
 
 period_button = None
 
-#time_content = None
-#period = None
-
 # Helper functions #############################################################
+def disable(widget):
+    # XXX Extend this function to disable a button or a menu entry!
+    widget.config(state = 'disabled')
+
+def enable(widget):
+    # XXX Extend this function to enable a button or a menu entry!
+    widget.config(state = 'enabled')
+
 def create_button(frame, label, command):
     button = ttk.Button(frame, text = label, command = command)
     button.pack(side = 'left')
     return button
-
-'''def create_time_display(parent, label, period):
-    lf = ttk.Labelframe(parent, text = label)
-    
-    content = tkinter.StringVar()
-    tkinter.Label(lf,
-        background = 'black',
-        foreground = 'yellow',
-        font = ('Consolas', 20, 'bold'),
-        textvariable = content
-    ).pack()
-    content.set(str(period))
-    
-    return lf, content'''
 ################################################################################
 
 # Handlers #####################################################################
-'''def update_time(root):
-    p = str(period)
-    if p != time_content.get():
-        time_content.set(p)
-        
-    root.after(UPDATE_TIME, curry(update_time, root))'''
-    
 def adjust_state(con):
     pass
     
 def start_pause_period():
-    con.start_time()
+    if not con.started:
+        con.start()
+    elif not con.paused:
+        con.pause()
+    else:
+        con.resume()
 
 def end_day():
     pass
@@ -180,19 +167,6 @@ def toolbar(parent):
     
     return frame
 
-def content(root):
-    #global time_content
-    
-    #frame = ttk.Frame(root)
-    
-    main_menu(root)
-    toolbar(root).pack(anchor = 'n', fill = 'x')
-    
-    '''td, time_content = create_time_display(frame, 'Zeit', period)
-    td.pack(anchor = 'n', padx = 2, pady = 2)'''
-    
-    #return frame
-
 def bind_events(root):
     root.bind('<Control-n>', lambda event: new_project())
     root.bind('<Control-o>', lambda event: open_project())
@@ -206,12 +180,9 @@ if __name__ == '__main__':
     root = tkinter.Tk()
     root.minsize(MIN_SIZE_X, MIN_SIZE_Y)
     root.wm_title(res.APP_TITLE)
-    #period = timelib.Working()  # XXX
-    #content(root)#.pack(fill = 'both')
     main_menu(root)
     toolbar(root).pack(anchor = 'n', fill = 'x')
     bind_events(root)
     con = controller.Controller(root, adjust_state)
-    #root.after(UPDATE_TIME, curry(update_time, root))
     
     root.mainloop()

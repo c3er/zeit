@@ -14,10 +14,42 @@ class Controller:
     def __init__(self, root, state_handler):
         self.root = root
         self.state_handler = state_handler
-        self.modified = False
+        self._modified = False
         self.project = None
         self.time_widget = None
         self.new_project()
+        
+    # Properties ###############################################################
+    def get_started(self):
+        return self.project.started
+    
+    def get_paused(self):
+        return self.project.paused
+    
+    def get_modified(self):
+        if self.started and not self.paused:
+            return True
+        else:
+            return self._modified
+    
+    started = property(get_started)
+    paused = property(get_paused)
+    modified = property(get_modified)
+    ############################################################################
+    
+    def _basic_wrapper(self, condition, func):
+        if condition:
+            func()
+            self._modified = True
+            self.update()
+            
+    def _ext_wrapper(self, condition, func, period, key):
+        if condition:
+            func()
+            display = self.time_widget[key]
+            display.period = period
+            self._modified = True
+            self.update()
         
     def new_project(self, name = res.UNNAMED):
         self.project = timelib.Project(name)
@@ -32,19 +64,27 @@ class Controller:
     def close_project(self):
         pass
     
-    def start_time(self):
-        self.project.start()
-        self.modified = True
-        print('Time started')
+    def start(self):
+        self._basic_wrapper(not self.started, self.project.start)
     
-    def stop_time(self):
-        pass
+    def pause(self):
+        self._ext_wrapper(
+            self.started and not self.paused,
+            self.project.pause,
+            self.project.current_day.current_pause,
+            res.DISPLAY_PAUSE
+        )
     
-    def pause_time(self):
-        pass
+    def resume(self):
+        self._ext_wrapper(
+            self.started and self.paused,
+            self.project.resume,
+            self.project.current_day.current_working,
+            res.DISPLAY_PERIOD
+        )
     
-    def resume_time(self):
-        pass
+    def stop(self):
+        self._basic_wrapper(self.started, self.project.stop)
     
     def update(self):
         self.state_handler(self)

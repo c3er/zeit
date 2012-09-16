@@ -148,20 +148,23 @@ class WorkingDay(Period):
     ############################################################################
     
     def start(self):
-        self.periods.append(Working(self))
-        # XXX Logical error has to be fixed!!!
-            
+        self.current_working.start()
+    
+    # XXX Logical error with the basic periods! ################################   
     def pause(self):
         if not self.paused:
-            self.current_working.end()
+            self.current_working.stop()
             self.periods.append(Pause(self))
+            self.current_pause.start()
             self.paused = True
     
     def resume(self):
         if self.paused:
-            self.current_working.end()
+            self.current_pause.stop()
             self.periods.append(Working(self))
+            self.current_working.start()
             self.paused = False
+    ############################################################################
             
     def stop(self):
         self.current_working.stop()
@@ -176,6 +179,7 @@ class Project(TimeStamp):
         self.working_days.append(WorkingDay(self))
         self.current_project = self
         self.parent_project = None
+        self.started = False
         
         # The start/stop mechanic from the TimeStamp class
         # is not of interest here
@@ -202,14 +206,19 @@ class Project(TimeStamp):
     def get_current_day(self):
         return self.current_project.working_days[-1]
     
+    def get_paused(self):
+        return self.current_day.paused
+    
     length = property(get_length)
     current_day = property(get_current_day)
+    paused = property(get_paused)
     ############################################################################
     
     def start(self, subproject = None):
         '''Starts a new working day of the project.'''
         if self.stoped:
             self.current_day.start()
+            self.started = True
             self.stoped = False
     
     def pause(self):
@@ -271,6 +280,12 @@ class TimeWidget:
         self.displays = []
         
         self.update()
+        
+    def __getitem__(self, key):
+        for d in self.displays:
+            if d.label == key:
+                return d
+        raise KeyError('Display not found.')
     
     def _build_frame(self):
         day = self.project.current_day
