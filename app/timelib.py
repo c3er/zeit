@@ -117,54 +117,38 @@ class WorkingDay(Period):
         self.periods = []
         self.paused = False
         self.project = project
+        self.current_working = Working(self)
+        self.current_pause = Pause(self)
         
     # Properties ###############################################################
-    def _get_current_period(self, cls):
-        for p in reversed(self.periods):
-            if isinstance(p, cls):
-                return p
-            
-        # There is no period of interst till now...
-        period = cls(self)
-        self.periods.append(period)
-        return period
-    
-    def get_current_working(self):
-        return self._get_current_period(Working)
-            
-    def get_current_pause(self):
-        return self._get_current_period(Pause)
-        
     def get_length(self):
-        td = datetime.timedelta()
+        length = self.current_working.length
         for p in self.periods:
             if isinstance(p, Working):
-                td += p.length
-        return td
-        
-    current_working = property(get_current_working)
-    current_pause = property(get_current_pause)
+                length += p.length
+        return length
+    
     length = property(get_length)
     ############################################################################
     
     def start(self):
         self.current_working.start()
-    
-    # XXX Logical error with the basic periods! ################################   
+     
     def pause(self):
         if not self.paused:
             self.current_working.stop()
-            self.periods.append(Pause(self))
+            self.periods.append(self.current_working)
+            self.current_working = Working(self)
             self.current_pause.start()
             self.paused = True
     
     def resume(self):
         if self.paused:
             self.current_pause.stop()
-            self.periods.append(Working(self))
+            self.periods.append(self.current_pause)
+            self.current_pause = Pause(self)
             self.current_working.start()
             self.paused = False
-    ############################################################################
             
     def stop(self):
         self.current_working.stop()
