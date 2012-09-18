@@ -17,6 +17,7 @@ class Controller:
         self._modified = False
         self.project = None
         self.time_widget = None
+        self.isnew = True
         self.new_project()
         
     # Properties ###############################################################

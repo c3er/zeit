@@ -116,6 +116,9 @@
 <node TEXT="Wenn das Programm zum ersten mal gestartet wird oder das Projekt beim letzten mal geschlossen wurde, wird ein neues Projekt mit dem vorl&#xe4;ufigen Namen &quot;Unbenannt&quot; erstellt" ID="ID_1073066797" CREATED="1346578069194" MODIFIED="1346578210326"/>
 </node>
 </node>
+<node TEXT="Dateiformat" ID="ID_122709268" CREATED="1348006591920" MODIFIED="1348006602599">
+<node TEXT="XML &#xe4;hnliches Format" ID="ID_695526528" CREATED="1348007097081" MODIFIED="1348007117251"/>
+</node>
 </node>
 <node TEXT="Sonstiges" POSITION="right" ID="ID_1677493891" CREATED="1344273267526" MODIFIED="1344273271879">
 <node TEXT="Programm soll auch als Exe-Datei vorhanden sein" ID="ID_1164933354" CREATED="1344273273344" MODIFIED="1344273300815"/>
