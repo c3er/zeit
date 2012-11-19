@@ -80,7 +80,7 @@ class ProjectFileReader(MarkupReaderBase):
         }
         
     # Handler for the tags #####################################################
-    def projectfile_start(self):
+    def projectfile_start(self, attrs):
         pass
     
     def projectfile_end(self):

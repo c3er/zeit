@@ -1,7 +1,55 @@
-<map version="0.9.0">
+<map version="freeplane 1.2.0">
 <!--To view this file, download free mind mapping software Freeplane from http://freeplane.sourceforge.net -->
-<node TEXT="Zeit-Programm" ID="ID_140218298" CREATED="1317579750742" MODIFIED="1317579767278">
-<hook NAME="MapStyle" max_node_width="600"/>
+<node TEXT="Zeit-Programm" FOLDED="false" ID="ID_140218298" CREATED="1317579750742" MODIFIED="1317579767278"><hook NAME="MapStyle">
+    <properties show_note_icons="true"/>
+
+<map_styles>
+<stylenode LOCALIZED_TEXT="styles.root_node">
+<stylenode LOCALIZED_TEXT="styles.predefined" POSITION="right">
+<stylenode LOCALIZED_TEXT="default" MAX_WIDTH="600" COLOR="#000000" STYLE="as_parent">
+<font NAME="SansSerif" SIZE="10" BOLD="false" ITALIC="false"/>
+</stylenode>
+<stylenode LOCALIZED_TEXT="defaultstyle.details"/>
+<stylenode LOCALIZED_TEXT="defaultstyle.note"/>
+<stylenode LOCALIZED_TEXT="defaultstyle.floating">
+<edge STYLE="hide_edge"/>
+<cloud COLOR="#f0f0f0" SHAPE="ROUND_RECT"/>
+</stylenode>
+</stylenode>
+<stylenode LOCALIZED_TEXT="styles.user-defined" POSITION="right">
+<stylenode LOCALIZED_TEXT="styles.topic" COLOR="#18898b" STYLE="fork">
+<font NAME="Liberation Sans" SIZE="10" BOLD="true"/>
+</stylenode>
+<stylenode LOCALIZED_TEXT="styles.subtopic" COLOR="#cc3300" STYLE="fork">
+<font NAME="Liberation Sans" SIZE="10" BOLD="true"/>
+</stylenode>
+<stylenode LOCALIZED_TEXT="styles.subsubtopic" COLOR="#669900">
+<font NAME="Liberation Sans" SIZE="10" BOLD="true"/>
+</stylenode>
+<stylenode LOCALIZED_TEXT="styles.important">
+<icon BUILTIN="yes"/>
+</stylenode>
+</stylenode>
+<stylenode LOCALIZED_TEXT="styles.AutomaticLayout" POSITION="right">
+<stylenode LOCALIZED_TEXT="AutomaticLayout.level.root" COLOR="#000000">
+<font SIZE="18"/>
+</stylenode>
+<stylenode LOCALIZED_TEXT="AutomaticLayout.level,1" COLOR="#0033ff">
+<font SIZE="16"/>
+</stylenode>
+<stylenode LOCALIZED_TEXT="AutomaticLayout.level,2" COLOR="#00b439">
+<font SIZE="14"/>
+</stylenode>
+<stylenode LOCALIZED_TEXT="AutomaticLayout.level,3" COLOR="#990000">
+<font SIZE="12"/>
+</stylenode>
+<stylenode LOCALIZED_TEXT="AutomaticLayout.level,4" COLOR="#111111">
+<font SIZE="10"/>
+</stylenode>
+</stylenode>
+</stylenode>
+</map_styles>
+</hook>
 <node TEXT="Programm zum Messen/Erfassen der eingesetzten Zeit" POSITION="right" ID="ID_894914387" CREATED="1343547122005" MODIFIED="1344181538270"/>
 <node TEXT="Features / M&#xf6;glichkeiten" POSITION="right" ID="ID_942218652" CREATED="1344181019211" MODIFIED="1344181136564">
 <node TEXT="Es soll Arbeitszeit erfasst werden" ID="ID_1848746208" CREATED="1344181064605" MODIFIED="1344181258858"/>
@@ -21,8 +69,8 @@
 <node TEXT="Bedienung" ID="ID_299427308" CREATED="1344212897038" MODIFIED="1344212901017">
 <node TEXT="Anzeige" ID="ID_104621226" CREATED="1344213551381" MODIFIED="1344213554863">
 <node TEXT="Abschnitt f&#xfc;r die aktuell aufgenommene Zeit" ID="ID_166741582" CREATED="1344213635529" MODIFIED="1344214459956">
-<node TEXT="Von oben nach unten" ID="ID_1801705817" CREATED="1344214591424" MODIFIED="1346017052084">
-<richcontent TYPE="NOTE">
+<node TEXT="Von oben nach unten" ID="ID_1801705817" CREATED="1344214591424" MODIFIED="1346017052084"><richcontent TYPE="NOTE">
+
 <html>
   <head>
     
@@ -32,7 +80,8 @@
       (Oder von Links nach rechts)
     </p>
   </body>
-</html></richcontent>
+</html>
+</richcontent>
 <node TEXT="Abschnitt" ID="ID_977305979" CREATED="1344214605960" MODIFIED="1347229955813">
 <node TEXT="hh:mm" ID="ID_219867079" CREATED="1344371188960" MODIFIED="1347230839948"/>
 </node>
@@ -58,16 +107,16 @@
 <node TEXT="Alle relevanten Zeiten f&#xfc;r das jeweilige Projekt" ID="ID_599724330" CREATED="1344213725497" MODIFIED="1344215449329">
 <node TEXT="Start/Ende" ID="ID_1797851177" CREATED="1344215021242" MODIFIED="1344215025801">
 <node TEXT="des Projektes" ID="ID_350976561" CREATED="1344214918544" MODIFIED="1344215413294">
-<arrowlink DESTINATION="ID_394371064" STARTINCLINATION="85;0;" ENDINCLINATION="85;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
+<arrowlink SHAPE="CUBIC_CURVE" COLOR="#000000" WIDTH="2" TRANSPARENCY="80" FONT_SIZE="9" FONT_FAMILY="SansSerif" DESTINATION="ID_394371064" STARTINCLINATION="85;0;" ENDINCLINATION="85;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
 </node>
 <node TEXT="des jeweiligen Unterprojektes" ID="ID_1748348726" CREATED="1344214948799" MODIFIED="1344215405723">
-<arrowlink DESTINATION="ID_394371064" STARTINCLINATION="119;0;" ENDINCLINATION="119;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
+<arrowlink SHAPE="CUBIC_CURVE" COLOR="#000000" WIDTH="2" TRANSPARENCY="80" FONT_SIZE="9" FONT_FAMILY="SansSerif" DESTINATION="ID_394371064" STARTINCLINATION="119;0;" ENDINCLINATION="119;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
 </node>
 <node TEXT="der jeweiligen Tage" ID="ID_1124620167" CREATED="1344214967692" MODIFIED="1344215393558">
-<arrowlink DESTINATION="ID_394371064" STARTINCLINATION="62;0;" ENDINCLINATION="62;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
+<arrowlink SHAPE="CUBIC_CURVE" COLOR="#000000" WIDTH="2" TRANSPARENCY="80" FONT_SIZE="9" FONT_FAMILY="SansSerif" DESTINATION="ID_394371064" STARTINCLINATION="62;0;" ENDINCLINATION="62;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
 </node>
 <node TEXT="der jeweiligen Abschnitten/Pausen" ID="ID_46450898" CREATED="1344215056088" MODIFIED="1344215383395">
-<arrowlink DESTINATION="ID_394371064" STARTINCLINATION="129;0;" ENDINCLINATION="129;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
+<arrowlink SHAPE="CUBIC_CURVE" COLOR="#000000" WIDTH="2" TRANSPARENCY="80" FONT_SIZE="9" FONT_FAMILY="SansSerif" DESTINATION="ID_394371064" STARTINCLINATION="129;0;" ENDINCLINATION="129;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
 </node>
 </node>
 <node TEXT="Die Dauer von allen Teilen" ID="ID_394371064" CREATED="1344215250758" MODIFIED="1344215289316">
@@ -113,11 +162,28 @@
 <node TEXT="Sonstiges" ID="ID_954277103" CREATED="1344263980715" MODIFIED="1344263991000">
 <node TEXT="Jedes Projekt wird in eine eigene Datei gespeichert" ID="ID_1931952674" CREATED="1344273009577" MODIFIED="1344273023946"/>
 <node TEXT="Beim Programmstart wird das zuletzt ge&#xf6;ffnete Projekt automatisch wieder ge&#xf6;ffnet" ID="ID_1182355663" CREATED="1344366846239" MODIFIED="1344366887641"/>
-<node TEXT="Wenn das Programm zum ersten mal gestartet wird oder das Projekt beim letzten mal geschlossen wurde, wird ein neues Projekt mit dem vorl&#xe4;ufigen Namen &quot;Unbenannt&quot; erstellt" ID="ID_1073066797" CREATED="1346578069194" MODIFIED="1346578210326"/>
+<node TEXT="Wenn das Programm zum ersten mal gestartet wird oder das Projekt beim letzten mal geschlossen wurde, wird ein neues Projekt mit dem vorl&#xe4;ufigen Namen &quot;Unbenannt&quot; erstellt" ID="ID_1073066797" CREATED="1346578069194" MODIFIED="1346578210326">
+<node TEXT="Das geschieht durch Laden einer &quot;Default&quot;-Datei" ID="ID_958692807" CREATED="1349008990735" MODIFIED="1349009057096">
+<arrowlink SHAPE="CUBIC_CURVE" COLOR="#000000" WIDTH="2" TRANSPARENCY="80" FONT_SIZE="9" FONT_FAMILY="SansSerif" DESTINATION="ID_122709268" STARTINCLINATION="996;0;" ENDINCLINATION="996;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
 </node>
 </node>
-<node TEXT="Dateiformat" ID="ID_122709268" CREATED="1348006591920" MODIFIED="1348006602599">
+</node>
+</node>
+<node TEXT="Dateiformat" ID="ID_122709268" CREATED="1348006591920" MODIFIED="1352605056969">
 <node TEXT="XML &#xe4;hnliches Format" ID="ID_695526528" CREATED="1348007097081" MODIFIED="1348007117251"/>
+<node TEXT="Struktur" ID="ID_1809499488" CREATED="1352599049128" MODIFIED="1352599054932">
+<node TEXT="&quot;projectfile&quot;" ID="ID_1699315358" CREATED="1352599107296" MODIFIED="1352599381152">
+<node TEXT="Wurzelement" ID="ID_1769260655" CREATED="1352599356781" MODIFIED="1352599359247"/>
+<node TEXT="Attribute" ID="ID_1546858198" CREATED="1352599134980" MODIFIED="1352599143948">
+<node TEXT="&quot;version&quot;" ID="ID_1276948298" CREATED="1352599145084" MODIFIED="1352599389222">
+<node TEXT="Enth&#xe4;lt die Versionsnummer der Datei" ID="ID_1213233436" CREATED="1352599338385" MODIFIED="1352599341440"/>
+</node>
+</node>
+<node TEXT="&quot;starttime&quot;" ID="ID_643094141" CREATED="1352599253015" MODIFIED="1352599431538">
+<node TEXT="Das Datum und die Uhrzeit, an der die Datei / das Projekt angelegt wurde" ID="ID_989293277" CREATED="1352599309173" MODIFIED="1352599440405"/>
+</node>
+</node>
+</node>
 </node>
 </node>
 <node TEXT="Sonstiges" POSITION="right" ID="ID_1677493891" CREATED="1344273267526" MODIFIED="1344273271879">

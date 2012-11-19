@@ -47,8 +47,7 @@ class Controller:
     def _ext_wrapper(self, condition, func, period, key):
         if condition:
             func()
-            display = self.time_widget[key]
-            display.period = period
+            self.time_widget[key].period = period
             self._modified = True
             self.update()
         
