@@ -1,7 +1,12 @@
 ﻿<projectfile version="0.1">
 	<project name="">
 		<working_days>
-		
+			<wday>
+				<working>
+					<starttime year="-1" month="-1" day="-1" hours="-1" minutes="-1" seconds="-1" />
+					<endtime year="-1" month="-1" day="-1" hours="-1" minutes="-1" seconds="-1" />
+				</working>
+			</wday>
 		</working_days>
 	</project>
 </projectfile>

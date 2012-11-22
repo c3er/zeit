@@ -128,7 +128,14 @@ class WorkingDay(Period):
                 length += p.length
         return length
     
+    def get_current_period(self):
+        if self.paused:
+            return self.current_pause
+        else:
+            return self.current_working
+    
     length = property(get_length)
+    current_period = property(get_current_period)
     ############################################################################
     
     def start(self):
@@ -151,7 +158,7 @@ class WorkingDay(Period):
             self.paused = False
             
     def stop(self):
-        self.current_working.stop()
+        self.current_period.stop()
         super().stop()
 
 class Project(TimeStamp):

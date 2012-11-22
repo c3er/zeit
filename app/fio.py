@@ -61,7 +61,7 @@ class MarkupReaderBase(html.parser.HTMLParser):
             try:
                 self.tmpdat += chr(int(name))
             except ValueError:
-                self.tmpdat += '?'
+                self.tmpdat += '&' + str(int(name)) + ';'
 
     def handle_entityref(self, name):
         if self.read_data_flag:
@@ -73,10 +73,14 @@ class ProjectFileReader(MarkupReaderBase):
         super().__init__()
         #...
         self.starttags = {
-            'projectfile': self.projectfile_start
+            'projectfile': self.projectfile_start,
+            'project': self.project_start,
+            'working_days': self.working_days_start,
         }
         self.endtags = {
-            'projectfile': self.projectfile_end
+            'projectfile': self.projectfile_end,
+            'project': self.project_end,
+            'working_days': self.working_days_end,
         }
         
     # Handler for the tags #####################################################
@@ -84,6 +88,18 @@ class ProjectFileReader(MarkupReaderBase):
         pass
     
     def projectfile_end(self):
+        pass
+    
+    def project_start(self, attrs):
+        pass
+    
+    def project_end(self):
+        pass
+    
+    def working_days_start(self, attrs):
+        pass
+    
+    def working_days_end(self):
         pass
     ############################################################################
 
