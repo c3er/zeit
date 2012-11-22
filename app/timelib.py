@@ -13,7 +13,7 @@ UPDATE_TIME = 100
 class TimeStamp:
     def __init__(self):
         self.starttime = datetime.timedelta()
-        self.stoped = True
+        self.stopped = True
         self._current = self.starttime
         
         self._weeks = 0
@@ -27,7 +27,7 @@ class TimeStamp:
     
     # Properties ###############################################################
     def get_current(self):
-        if not self.stoped:
+        if not self.stopped:
             self._current = datetime.datetime.today()
         return self._current
     
@@ -83,15 +83,15 @@ class TimeStamp:
         self._seconds = seconds
         
     def start(self):
-        if self.stoped:
+        if self.stopped:
             self.starttime = datetime.datetime.today()
             self._current = self.starttime
-            self.stoped = False
+            self.stopped = False
     
     def stop(self):
-        if not self.stoped:
+        if not self.stopped:
             self._current = datetime.datetime.today()
-            self.stoped = True
+            self.stopped = True
 
 class Period(TimeStamp):
     def __init__(self, working_day = None):
@@ -167,14 +167,14 @@ class Project(TimeStamp):
         self.name = name
         self.subprojects = []
         self.working_days = []
-        self.working_days.append(WorkingDay(self))
-        self.current_project = self
+        #self.working_days.append(WorkingDay(self))
+        self.current_project = None
         self.parent_project = None
         self.started = False
         
         # The start/stop mechanic from the TimeStamp class
         # is not of interest here
-        self.stoped = True
+        self.stopped = True
         
     def __str__(self):
         return '{:02d}:{:02d}:{:02d}:{:02d}:{:02d}'.format(
@@ -207,10 +207,10 @@ class Project(TimeStamp):
     
     def start(self, subproject = None):
         '''Starts a new working day of the project.'''
-        if self.stoped:
+        if self.stopped:
             self.current_day.start()
             self.started = True
-            self.stoped = False
+            self.stopped = False
     
     def pause(self):
         self.current_day.pause()
@@ -219,9 +219,9 @@ class Project(TimeStamp):
         self.current_day.resume()
     
     def stop(self):
-        if not self.stoped:
+        if not self.stopped:
             self.current_day.stop()
-            self.stoped = True
+            self.stopped = True
 
 class SubProject(Project):
     def __init__(self, name, project):

@@ -1,5 +1,5 @@
 ﻿<projectfile version="0.1">
-	<project name="">
+	<project name="" current="true">
 		<working_days>
 			<wday>
 				<working>

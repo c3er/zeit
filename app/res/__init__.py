@@ -30,3 +30,5 @@ MENU_ATTACH_DAY_TO_SUBPROJECT = 'Zum Unterprojekt zuordnen...'
 
 DISPLAY_PERIOD = 'Abschnitt'
 DISPLAY_PAUSE = 'Pause'
+
+FILE_READ_ERROR = 'Konnte Datei nicht lesen'
