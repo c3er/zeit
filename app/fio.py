@@ -3,6 +3,7 @@
 
 '''File Input/Output'''
 
+import datetime
 import html.parser
 import html.entities
 
@@ -78,6 +79,10 @@ class ProjectFileReader(MarkupReaderBase):
         
         self._project_stack = []
         self.project = None
+        self.starttime = None
+        self.endtime = None
+        self.inworking = False
+        self.inpause = False
         
         self.starttags = {
             'projectfile': self.projectfile_start,
@@ -125,9 +130,7 @@ class ProjectFileReader(MarkupReaderBase):
             raise ProjectFileError('File is broken.')
         
         name = find_attr(attrs, 'name')
-        if name is None:
-            raise ProjectFileError('Project has no name.')
-        elif name == '':
+        if not name:
             name = res.UNNAMED
             
         current = find_attr(attrs, 'current')
@@ -151,6 +154,21 @@ class ProjectFileReader(MarkupReaderBase):
         self.project = cls(name)
         if current:
             self.root_project.current_project = self.project
+            
+    def read_time(self, attrs):
+        year = int(find_attr(attrs, 'year'))
+        month = int(find_attr(attrs, 'month'))
+        day = int(find_attr(attrs, 'day'))
+        hours = int(find_attr(attrs, 'hours'))
+        minutes = int(find_attr(attrs, 'minutes'))
+        seconds = int(find_attr(attrs, 'seconds'))
+        
+        if year == month == day == hours == minutes == seconds == -1:
+            time = datetime.datetime.today()
+        else:
+            time = datetime.datetime(year, month, day, hours, minutes, seconds)
+            
+        return time
     ############################################################################
         
     # Handler for the tags #####################################################
@@ -201,22 +219,32 @@ class ProjectFileReader(MarkupReaderBase):
         pass
     
     def working_start(self, attrs):
-        pass
+        self.inworking = True
     
     def working_end(self):
-        pass
+        self.project.current_day.periods.append(
+            timelib.Working(
+                self.project.current_day, self.starttime, self.endtime
+            )
+        )
+        self.inworking = False
     
     def pause_start(self, attrs):
-        pass
+        self.inpause = True
     
     def pause_end(self):
-        pass
+        self.project.current_day.periods.append(
+            timelib.Pause(
+                self.project.current_day, self.starttime, self.endtime
+            )
+        )
+        self.inpause = False
     
     def starttime_start(self, attrs):
-        pass
+        self.starttime = self.read_time(attrs)
     
     def endtime_start(self, attrs):
-        pass
+        self.endtime = self.read_time(attrs)
     ############################################################################
 
 # Helper functions #############################################################

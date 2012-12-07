@@ -3,7 +3,11 @@
 
 '''Mediator between the GUI and the data.'''
 
+import sys
+import os
+
 import timelib
+import fio
 import res
 from misc import *
 
@@ -15,9 +19,9 @@ class Controller:
         self.root = root
         self.state_handler = state_handler
         self._modified = False
+        self.path = None
         self.project = None
         self.time_widget = None
-        self.isnew = True
         self.new_project()
         
     # Properties ###############################################################
@@ -52,14 +56,22 @@ class Controller:
             self.update()
         
     def new_project(self, name = res.UNNAMED):
-        self.project = timelib.Project(name)
+        path = os.path.join(sys.path[0], res.DEFAULT_FILE)
+        self.project = fio.load(path)
         self.time_widget = timelib.TimeWidget(self.root, self.project)
     
     def open_project(self, path):
-        pass
+        self.project = fio.load(path)
     
     def save_project(self, path = None):
-        pass
+        if path is not None:
+            self.path = path
+
+        if not self.path:
+            raise UnknownPathException()
+        else:
+            fio.save(self.project, path)
+            self.update()
     
     def close_project(self):
         pass

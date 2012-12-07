@@ -10,11 +10,22 @@ from misc import *
 
 UPDATE_TIME = 100
 
+class PeriodError(Exception):
+    pass
+
 class TimeStamp:
-    def __init__(self):
-        self.starttime = datetime.timedelta()
+    def __init__(self, starttime = None, endtime = None):
+        if starttime is None:
+            self.starttime = datetime.timedelta()
+        else:
+            self.starttime = starttime
+            
+        if endtime is None:
+            self.endtime = self.starttime
+        else:
+            self.endtime = endtime
+            
         self.stopped = True
-        self._current = self.starttime
         
         self._weeks = 0
         self._days = 0
@@ -23,13 +34,33 @@ class TimeStamp:
         self._seconds = 0
     
     def __str__(self):
-        raise NotImplementedError
+        raise NotImplementedError()
     
+    # Helper functions #########################################################
+    def _split_times(self, t, length):
+        if t >= length:
+            val, t = divmod(t, length)
+        else:
+            val = 0
+        return val, t
+    
+    def _split_length(self):
+        minutes, seconds = self._split_times(self.length.seconds, 60)
+        hours, minutes = self._split_times(minutes, 60)
+        weeks, days = self._split_times(self.length.days, 7)
+            
+        self._weeks = weeks
+        self._days = days
+        self._hours = hours
+        self._minutes = minutes
+        self._seconds = seconds
+    ############################################################################
+
     # Properties ###############################################################
     def get_current(self):
         if not self.stopped:
-            self._current = datetime.datetime.today()
-        return self._current
+            self.endtime = datetime.datetime.today()
+        return self.endtime
     
     def get_length(self):
         return self.current - self.starttime
@@ -64,38 +95,20 @@ class TimeStamp:
     seconds = property(get_seconds)
     ############################################################################
 
-    def _split_times(self, t, length):
-        if t >= length:
-            val, t = divmod(t, length)
-        else:
-            val = 0
-        return val, t
-    
-    def _split_length(self):
-        minutes, seconds = self._split_times(self.length.seconds, 60)
-        hours, minutes = self._split_times(minutes, 60)
-        weeks, days = self._split_times(self.length.days, 7)
-            
-        self._weeks = weeks
-        self._days = days
-        self._hours = hours
-        self._minutes = minutes
-        self._seconds = seconds
-        
     def start(self):
         if self.stopped:
             self.starttime = datetime.datetime.today()
-            self._current = self.starttime
+            self.endtime = self.starttime
             self.stopped = False
     
     def stop(self):
         if not self.stopped:
-            self._current = datetime.datetime.today()
+            self.endtime = datetime.datetime.today()
             self.stopped = True
 
 class Period(TimeStamp):
-    def __init__(self, working_day = None):
-        super().__init__()
+    def __init__(self, working_day = None, *args, **kw):
+        super().__init__(*args, **kw)
         self.working_day = working_day
         
     def __str__(self):
@@ -112,21 +125,31 @@ class Pause(Period):
     pass
     
 class WorkingDay(Period):
-    def __init__(self, project):
-        super().__init__()
+    def __init__(self, project, *args, **kw):
+        super().__init__(*args, **kw)
         self.periods = []
         self.paused = False
         self.project = project
-        self.current_working = Working(self)
-        self.current_pause = Pause(self)
         
     # Properties ###############################################################
+    def _get_current_period(self, cls):
+        for p in reversed(self.periods):
+            if isinstance(p, cls):
+                return p
+        raise PeriodError('No "' + cls.__name__ + '" period found in this day.')
+    
     def get_length(self):
-        length = self.current_working.length
+        length = datetime.timedelta()
         for p in self.periods:
             if isinstance(p, Working):
                 length += p.length
         return length
+    
+    def get_current_working(self):
+        return self._get_current_period(Working)
+    
+    def get_current_pause(self):
+        return self._get_current_period(Pause)
     
     def get_current_period(self):
         if self.paused:
@@ -135,6 +158,8 @@ class WorkingDay(Period):
             return self.current_working
     
     length = property(get_length)
+    current_working = property(get_current_working)
+    current_pause = property(get_current_pause)
     current_period = property(get_current_period)
     ############################################################################
     
@@ -144,16 +169,14 @@ class WorkingDay(Period):
     def pause(self):
         if not self.paused:
             self.current_working.stop()
-            self.periods.append(self.current_working)
-            self.current_working = Working(self)
+            self.periods.append(Working(self))
             self.current_pause.start()
             self.paused = True
     
     def resume(self):
         if self.paused:
             self.current_pause.stop()
-            self.periods.append(self.current_pause)
-            self.current_pause = Pause(self)
+            self.periods.append(Pause(self))
             self.current_working.start()
             self.paused = False
             
@@ -162,12 +185,11 @@ class WorkingDay(Period):
         super().stop()
 
 class Project(TimeStamp):
-    def __init__(self, name):
-        super().__init__()
+    def __init__(self, name, *args, **kw):
+        super().__init__(*args, **kw)
         self.name = name
         self.subprojects = []
         self.working_days = []
-        #self.working_days.append(WorkingDay(self))
         self.current_project = None
         self.parent_project = None
         self.started = False
@@ -224,8 +246,8 @@ class Project(TimeStamp):
             self.stopped = True
 
 class SubProject(Project):
-    def __init__(self, name, project):
-        super().__init__(name)
+    def __init__(self, name, project, *args, **kw):
+        super().__init__(name, *args, **kw)
         self.parent_project = project
 
 # GUI related ##################################################################
@@ -298,6 +320,9 @@ class TimeWidget:
                     DisplayContainer(self.frame, project.name, project)
                 )
                 project = project.parent_project
+        else:
+            for d in self.displays:
+                d.update()
         
     def update(self):
         if self.frame is not None:

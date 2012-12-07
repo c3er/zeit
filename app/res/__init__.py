@@ -3,6 +3,10 @@
 
 APP_TITLE = 'Zeiterfassung'
 
+PROJECT_FILE_STR = 'Projekt Dateien'
+PROJECT_FILE_EXT = '.zeit'
+DEFAULT_FILE = 'default.zeit'
+
 DAY = 'Tag'
 STOP = 'Beenden'
 UNNAMED = 'Unbenannt'

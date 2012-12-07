@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import tkinter
+import tkinter.filedialog
 import tkinter.ttk as ttk
 
 import controller
@@ -50,13 +51,26 @@ def new_project():
     pass
 
 def open_project():
-    pass
+    path = tkinter.filedialog.askopenfilename(
+        filetypes = [(res.PROJECT_FILE_STR, res.PROJECT_FILE_EXT)]
+    )
+    if path:
+        con.open_project(path)
 
 def save_project():
-    pass
+    try:
+        con.save_project()
+    except controller.UnknownPathException:
+        save_project_as()
 
 def save_project_as():
-    pass
+    path = tkinter.filedialog.asksaveasfilename(
+        filetypes = [(res.PROJECT_FILE_STR, res.PROJECT_FILE_EXT)]
+    )
+    if path:
+        if not path.endswith(res.PROJECT_FILE_EXT):
+            path += res.PROJECT_FILE_EXT
+        con.save_project(path)
 
 def close_project():
     pass
