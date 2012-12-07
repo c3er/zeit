@@ -225,6 +225,30 @@ def find_attr(attrs, name):
         if attr == name:
             return val
     return None
+
+def write_tag(tag, *args, attrs = None, content = None):
+    '''Writes a tag, following the XML syntax.
+    
+    Parameters:
+        "tag" contains the name of the tag.
+        "attrs" shall be a list, containing tuples in the form "(attr, val)".
+        The first element is the name of the attribute and the second is its
+        value.
+        "content" contains the whole content between start and end tag. If its
+        value is None, the resulting tag will be a start/end tag.
+    '''
+    output = '<' + tag
+    
+    if attrs is not None:
+        for attr, val in attrs:
+            output += ' ' + attr + '="' + val + '"'
+
+    if content is not None:
+        output += '>\n' + str(content) + '\n</' + tag + '>\n'
+    else:
+        output += '/>\n'
+    
+    return output
 ################################################################################
 
 # "Public" functions ###########################################################

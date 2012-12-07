@@ -186,13 +186,22 @@
 <node TEXT="&quot;name&quot;" ID="ID_1577452091" CREATED="1353337738022" MODIFIED="1353337743429">
 <node TEXT="Der Name des Projekts" ID="ID_1505918070" CREATED="1353337745373" MODIFIED="1353337754411"/>
 </node>
+<node TEXT="&quot;current&quot;" ID="ID_1357212388" CREATED="1353586144460" MODIFIED="1353586152990">
+<node TEXT="Zur Bestimmung, welches (Unter-) Projekt gerade bearbeitet wird" ID="ID_1951748142" CREATED="1353586176241" MODIFIED="1353586218262"/>
+<node TEXT="Kann 2 Werte enthalten" ID="ID_673842802" CREATED="1353586219406" MODIFIED="1353586235942">
+<node TEXT="&quot;true&quot;" ID="ID_1390651142" CREATED="1353586237078" MODIFIED="1353586243457">
+<node TEXT="Sinnvollerweise darf dieser Wert nur in einem (Unter-) Projekt vorhanden sein" ID="ID_1921680032" CREATED="1353586259420" MODIFIED="1353586300180"/>
+</node>
+<node TEXT="&quot;false&quot;" ID="ID_385387978" CREATED="1353586243829" MODIFIED="1353586248882"/>
+</node>
+</node>
 </node>
 <node TEXT="&quot;subprojects&quot;" ID="ID_18454162" CREATED="1353578270884" MODIFIED="1353578279216">
 <node TEXT="Optional" ID="ID_843692882" CREATED="1353338150312" MODIFIED="1353338169539"/>
 <node TEXT="Enth&#xe4;lt die Unterprojekte" ID="ID_837362975" CREATED="1353578302497" MODIFIED="1353578313310"/>
 <node TEXT="&quot;subproject&quot;" ID="ID_532047784" CREATED="1353338134593" MODIFIED="1353338146812">
 <node TEXT="Das jeweilige Unterprojekt" ID="ID_377658275" CREATED="1353578327590" MODIFIED="1353578338481"/>
-<node TEXT="Identisch mit &quot;project&quot;" ID="ID_1922884568" CREATED="1353338169944" MODIFIED="1353338188920"/>
+<node TEXT="Identisch mit &quot;project&quot; (inklusive der Unterelemente)" ID="ID_1922884568" CREATED="1353338169944" MODIFIED="1353585873301"/>
 </node>
 </node>
 <node TEXT="&quot;working_days&quot;" ID="ID_1601167193" CREATED="1353337929614" MODIFIED="1353337948955">
@@ -215,7 +224,10 @@
 <node TEXT="&quot;seconds&quot;" ID="ID_849102176" CREATED="1353336984043" MODIFIED="1353336991313"/>
 </node>
 </node>
-<node TEXT="&quot;endtime&quot;" ID="ID_1681025254" CREATED="1353339525196" MODIFIED="1353339541464"/>
+<node TEXT="&quot;endtime&quot;" ID="ID_1681025254" CREATED="1353339525196" MODIFIED="1353339541464">
+<node TEXT="Das Datum und die Uhrzeit, an der die Periode abgeschlossen wurde" ID="ID_620188338" CREATED="1353586364977" MODIFIED="1353586374655"/>
+<node TEXT="Ansonsten identisch mit &quot;starttime&quot;" ID="ID_258048418" CREATED="1353586382535" MODIFIED="1353586398231"/>
+</node>
 </node>
 <node TEXT="&quot;pause&quot;" ID="ID_1577906686" CREATED="1353339345958" MODIFIED="1353339350586">
 <node TEXT="K&#xf6;nnen beliebig oft zwischen den Arbeitsperioden eingef&#xfc;gt werden" ID="ID_660532062" CREATED="1353339404966" MODIFIED="1353339443800"/>
