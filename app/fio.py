@@ -258,12 +258,15 @@ def write_tag(tag, *args, attrs = None, content = None):
     '''Writes a tag, following the XML syntax.
     
     Parameters:
-        "tag" contains the name of the tag.
-        "attrs" shall be a list, containing tuples in the form "(attr, val)".
-        The first element is the name of the attribute and the second is its
-        value.
-        "content" contains the whole content between start and end tag. If its
-        value is None, the resulting tag will be a start/end tag.
+    - tag: Contains the name of the tag.
+    - attrs: A list, containing tuples in the form "(attr, val)".
+      The first element is the name of the attribute and the second is its
+      value.
+    - content: Contains the whole content between start and end tag. If its
+      value is None, the resulting tag will be a start/end tag.
+    
+    Returns:
+    A string, containing the written tag.
     '''
     output = '<' + tag
     

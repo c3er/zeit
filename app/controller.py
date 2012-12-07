@@ -16,6 +16,13 @@ class UnknownPathException(Exception):
 
 class Controller:
     def __init__(self, root, state_handler):
+        '''Constructor of the "Controller" class.
+        
+        Parameters:
+        - root: Toplevel widget of Tk.
+        - state_handler: A handler function, which updates the GUI,
+          depending on the internal state of the controller.
+        '''
         self.root = root
         self.state_handler = state_handler
         self._modified = False
@@ -62,6 +69,7 @@ class Controller:
     
     def open_project(self, path):
         self.project = fio.load(path)
+        self.time_widget = timelib.TimeWidget(self.root, self.project)
     
     def save_project(self, path = None):
         if path is not None:

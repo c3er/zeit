@@ -233,7 +233,6 @@
 <node TEXT="&quot;pause&quot;" ID="ID_1577906686" CREATED="1353339345958" MODIFIED="1353339350586">
 <node TEXT="K&#xf6;nnen beliebig oft zwischen den Arbeitsperioden eingef&#xfc;gt werden" ID="ID_660532062" CREATED="1353339404966" MODIFIED="1353339443800"/>
 <node TEXT="Technisch gesehen identisch mit &quot;working&quot;" ID="ID_324947603" CREATED="1353339468275" MODIFIED="1353339481999"/>
-<node TEXT="(Optional)" ID="ID_1851187665" CREATED="1353339621224" MODIFIED="1353339631126"/>
 </node>
 </node>
 </node>
