@@ -50,15 +50,35 @@ class Controller:
     ############################################################################
     
     def _basic_wrapper(self, condition, func):
+        '''A wrapper function, which calls the given function, if the given
+        condition evaluates to "True", sets the state to "modified" and updates
+        the view.
+        
+        Parameters:
+        - condition: If this evaluates to "False", nothing will happen.
+        - func: A function object, which will be called only, if the condition
+          evaluates to "True".
+        '''
         if condition:
             func()
             self._modified = True
             self.update()
             
-    def _ext_wrapper(self, condition, func, period, key):
+    def _ext_wrapper(self, condition, func, period, name):
+        '''Like the basic wrapper, but additionally it assigns to the display
+        with the given name another period object.
+        
+        Parameters:
+        - condition: If this evaluates to "False", nothing will happen.
+        - func: A function object, which will be called only, if the condition
+          evaluates to "True".
+        - period: A "Period" object, which will be assigned to the given
+          display.
+        - name: The name of the display, which will get another "Period" object.
+        '''
         if condition:
             func()
-            self.time_widget[key].period = period
+            self.time_widget[name].period = period
             self._modified = True
             self.update()
         

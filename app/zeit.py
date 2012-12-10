@@ -15,7 +15,61 @@ MIN_SIZE_Y = 100
 
 con = None
 
+main_menu = None
 period_button = None
+
+class Menu:
+    def __init__(self, tkparent):
+        self.children = []
+        self.tkmenu = tkinter.Menu(tkparent)
+        if not isinstance(self, SubMenu):
+            tkparent.config(menu = menu)
+        self.tkparent = tkparent
+        self.label = None
+        
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            for c in self.children:
+                if c.label == key:
+                    return c
+            raise KeyError()
+        elif isinstance(key, tuple):
+            item = key[0]
+            for c in self.children:
+                if c.label == item:
+                    if len(key) > 1:
+                        return c[key[1:]]
+                    else:
+                        return c
+            raise KeyError()
+        else:
+            raise TypeError('"key" must be a "str" or "tuple" object.')
+    
+    def add_submenu(self, label):
+        submenu = SubMenu(label, self, self.tkmenu)
+        self.tkmenu.add_cascade(label = label, menu = submenu.tkmenu)
+        self.children.append(submenu)
+        return submenu
+    
+    def add_item(self, label, command, *args, **kw):
+        item = MenuItem(self, label, command)
+        self.tkmenu.add_command(*args, label = label, command = command, **kw)
+        self.children.append(item)
+        return item
+    
+    def add_seperator(self):
+        self.tkmenu.add_separator()
+    
+class SubMenu(Menu):
+    def __init__(self, label, parent, *args, **kw):
+        super().__init__(*args, **kw)
+        self.label = label
+    
+class MenuItem:
+    def __init__(self, parent, label, command):
+        self.parent = parent
+        self.label = label
+        self.command = command
 
 # Helper functions #############################################################
 def disable(widget):
@@ -95,7 +149,7 @@ def attach_day_to_subproject():
 ################################################################################
 
 # Appearence ###################################################################
-def main_menu(root):
+def create_main_menu(root):
     root.option_add('*tearOff', False)
     menu = tkinter.Menu(root)
     root.config(menu = menu)
@@ -194,7 +248,7 @@ if __name__ == '__main__':
     root = tkinter.Tk()
     root.minsize(MIN_SIZE_X, MIN_SIZE_Y)
     root.wm_title(res.APP_TITLE)
-    main_menu(root)
+    create_main_menu(root)
     toolbar(root).pack(anchor = 'n', fill = 'x')
     bind_events(root)
     con = controller.Controller(root, adjust_state)

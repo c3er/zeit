@@ -33,8 +33,9 @@ def createmenubar(self):
     self.reset_help_menu_entries()
     
 def prepstr(s):
-    # Helper to extract the underscore from a string, e.g.
-    # prepstr("Co_py") returns (2, "Copy").
+    '''Helper to extract the underscore from a string,
+	e.g. prepstr("Co_py") returns (2, "Copy").
+	'''
     i = s.find('_')
     if i >= 0:
         s = s[:i] + s[i+1:]
