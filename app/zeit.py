@@ -23,7 +23,7 @@ class Menu:
         self.children = []
         self.tkmenu = tkinter.Menu(tkparent)
         if not isinstance(self, SubMenu):
-            tkparent.config(menu = menu)
+            tkparent.config(menu = self.tkmenu)
         self.tkparent = tkparent
         self.label = None
         
@@ -33,15 +33,20 @@ class Menu:
                 if c.label == key:
                     return c
             raise KeyError()
+        
         elif isinstance(key, tuple):
             item = key[0]
             for c in self.children:
                 if c.label == item:
                     if len(key) > 1:
-                        return c[key[1:]]
+                        if isinstance(c, Menu):
+                            return c[key[1:]]
+                        else:
+                            raise KeyError()
                     else:
                         return c
             raise KeyError()
+        
         else:
             raise TypeError('"key" must be a "str" or "tuple" object.')
     
@@ -150,79 +155,45 @@ def attach_day_to_subproject():
 
 # Appearence ###################################################################
 def create_main_menu(root):
-    root.option_add('*tearOff', False)
-    menu = tkinter.Menu(root)
-    root.config(menu = menu)
+    menu = Menu(root)
     
     # File menu
-    file_menu = tkinter.Menu(menu)
-    menu.add_cascade(label = res.MENU_FILE, menu = file_menu)
-    file_menu.add_command(
-        label = res.STOP,
-        command = root.destroy,
-        accelerator = 'Alt+F4'
-    )
+    file_menu = menu.add_submenu(res.MENU_FILE)
+    file_menu.add_item(res.STOP, root.destroy, accelerator = 'Alt+F4')
     
     # Project menu
-    project_menu = tkinter.Menu(menu)
-    menu.add_cascade(label = res.MENU_PROJECT, menu = project_menu)
-    project_menu.add_command(
-        label = res.MENU_NEW_PROJECT,
-        command = new_project,
-        accelerator = 'Strg+N'
+    project_menu = menu.add_submenu(res.MENU_PROJECT)
+    project_menu.add_item(
+        res.MENU_NEW_PROJECT, new_project, accelerator = 'Strg+N'
     )
-    project_menu.add_command(
-        label = res.MENU_OPEN_PROJECT,
-        command = open_project,
-        accelerator = 'Strg+O'
+    project_menu.add_item(
+        res.MENU_OPEN_PROJECT, open_project, accelerator = 'Strg+O'
     )
-    project_menu.add_command(
-        label = res.MENU_SAVE_PROJECT,
-        command = save_project,
-        accelerator = 'Strg+S'
+    project_menu.add_item(
+        res.MENU_SAVE_PROJECT, save_project, accelerator = 'Strg+S'
     )
-    project_menu.add_command(
-        label = res.MENU_SAVE_PROJECT_AS,
-        command = save_project_as,
+    project_menu.add_item(
+        res.MENU_SAVE_PROJECT_AS,
+        save_project_as,
         accelerator = 'Strg+Umschalt+S'
     )
-    project_menu.add_command(
-        label = res.MENU_CLOSE_PROJECT,
-        command = close_project,
-        accelerator = 'Strg+W'
+    project_menu.add_item(
+        res.MENU_CLOSE_PROJECT, close_project, accelerator = 'Strg+W'
     )
     
     # Subproject menu
-    subproject_menu = tkinter.Menu(menu)
-    menu.add_cascade(label = res.MENU_SUBPROJECT, menu = subproject_menu)
-    subproject_menu.add_command(
-        label = res.MENU_NEW_SUBPROJECT,
-        command = new_subproject
-    )
-    subproject_menu.add_command(
-        label = res.MENU_CONTINUE_SUBPROJECT,
-        command = continue_subproject
-    )
-    subproject_menu.add_command(
-        label = res.MENU_CLOSE_SUBPROJECT,
-        command = close_subproject
-    )
+    subproject_menu = menu.add_submenu(res.MENU_SUBPROJECT)
+    subproject_menu.add_item(res.MENU_NEW_SUBPROJECT, new_subproject)
+    subproject_menu.add_item(res.MENU_CONTINUE_SUBPROJECT, continue_subproject)
+    subproject_menu.add_item(res.MENU_CLOSE_SUBPROJECT, close_subproject)
     
     # Day menu
-    day_menu = tkinter.Menu(menu)
-    menu.add_cascade(label = res.DAY, menu = day_menu)
-    day_menu.add_command(
-        label = res.MENU_START_PAUSE_DAY,
-        command = start_pause_day
-    )
-    day_menu.add_command(
-        label = res.STOP,
-        command = stop_day
-    )
-    day_menu.add_separator()
-    day_menu.add_command(
-        label = res.MENU_ATTACH_DAY_TO_SUBPROJECT,
-        command = attach_day_to_subproject
+    day_menu = menu.add_submenu(res.DAY)
+    day_menu.add_item(res.MENU_START_PAUSE_DAY, start_pause_day)
+    day_menu.add_item(res.STOP, stop_day)
+    day_menu.add_seperator()
+    day_menu.add_item(
+        res.MENU_ATTACH_DAY_TO_SUBPROJECT, attach_day_to_subproject
     )
 
 def toolbar(parent):
@@ -248,7 +219,7 @@ if __name__ == '__main__':
     root = tkinter.Tk()
     root.minsize(MIN_SIZE_X, MIN_SIZE_Y)
     root.wm_title(res.APP_TITLE)
-    create_main_menu(root)
+    main_menu = create_main_menu(root)
     toolbar(root).pack(anchor = 'n', fill = 'x')
     bind_events(root)
     con = controller.Controller(root, adjust_state)
