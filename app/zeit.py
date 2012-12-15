@@ -118,6 +118,11 @@ def adjust_state(con):
     else:
         pass
     
+    if con.paused or not con.started:
+        period_button.config(text = res.BUTTON_START)
+    else:
+        period_button.config(text = res.BUTTON_PAUSE)
+    
 def start_pause_period():
     if not con.started:
         con.start()
