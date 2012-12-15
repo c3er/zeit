@@ -26,6 +26,13 @@ menu_day_stop = None
 
 period_button = None
 
+class CanDisabled:
+    def disable(self):
+        self.parent.tkmenu.entryconfigure(self.label, state = 'disabled')
+    
+    def enable(self):
+        self.parent.tkmenu.entryconfigure(self.label, state = 'enabled')
+
 class Menu:
     def __init__(self, tkparent):
         self.children = []
@@ -56,29 +63,17 @@ class Menu:
     def add_seperator(self):
         self.tkmenu.add_separator()
     
-class SubMenu(Menu):
+class SubMenu(Menu, CanDisabled):
     def __init__(self, label, parent, *args, **kw):
         super().__init__(*args, **kw)
         self.parent = parent
         self.label = label
-        
-    def disable(self):
-        self.parent.tkmenu.entryconfigure(self.label, state = 'disabled')
     
-    def enable(self):
-        self.parent.tkmenu.entryconfigure(self.label, state = 'enabled')
-    
-class MenuItem:
+class MenuItem(CanDisabled):
     def __init__(self, parent, label, command):
         self.parent = parent
         self.label = label
         self.command = command
-        
-    def disable(self):
-        self.parent.tkmenu.entryconfigure(self.label, state = 'disabled')
-    
-    def enable(self):
-        self.parent.tkmenu.entryconfigure(self.label, state = 'enabled')
 
 # Helper functions #############################################################
 def _widget_config(tk_func, menu_func):
