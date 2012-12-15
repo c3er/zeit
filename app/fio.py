@@ -259,7 +259,7 @@ def write_tag(tag, *args, attrs = None, content = None):
     
     Parameters:
     - tag: Contains the name of the tag.
-    - attrs: A list, containing tuples in the form "(attr, val)".
+    - attrs: A list (or tuple), containing tuples in the form "(attr, val)".
       The first element is the name of the attribute and the second is its
       value.
     - content: Contains the whole content between start and end tag. If its

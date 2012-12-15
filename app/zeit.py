@@ -8,6 +8,7 @@ import tkinter.ttk as ttk
 import controller
 import timelib
 import res
+import res.menu
 from misc import *
 
 MIN_SIZE_X = 250
@@ -60,6 +61,12 @@ class SubMenu(Menu):
         super().__init__(*args, **kw)
         self.parent = parent
         self.label = label
+        
+    def disable(self):
+        self.parent.tkmenu.entryconfigure(self.label, state = 'disabled')
+    
+    def enable(self):
+        self.parent.tkmenu.entryconfigure(self.label, state = 'enabled')
     
 class MenuItem:
     def __init__(self, parent, label, command):
@@ -74,13 +81,19 @@ class MenuItem:
         self.parent.tkmenu.entryconfigure(self.label, state = 'enabled')
 
 # Helper functions #############################################################
+def _widget_config(tk_func, menu_func):
+    if isinstance(widget, (tkinter.Button, ttk.Button)):
+        tk_func()
+    elif isinstance(widget, (SubMenu, MenuItem)):
+        menu_func()
+    else:
+        raise TypeError()
+
 def disable(widget):
-    # XXX Extend this function to disable a button or a menu entry!
-    widget.config(state = 'disabled')
+    _widget_config(curry(widget.config, state = 'disabled'), widget.disable)
 
 def enable(widget):
-    # XXX Extend this function to enable a button or a menu entry!
-    widget.config(state = 'enabled')
+    _widget_config(curry(widget.config, state = 'enabled'), widget.enable)
 
 def create_button(frame, label, command):
     button = ttk.Button(frame, text = label, command = command)
@@ -161,44 +174,44 @@ def create_main_menu(root):
     menu = Menu(root)
     
     # File menu
-    file_menu = menu.add_submenu(res.MENU_FILE)
+    file_menu = menu.add_submenu(res.menu.FILE)
     file_menu.add_item(res.STOP, root.destroy, accelerator = 'Alt+F4')
     
     # Project menu
-    project_menu = menu.add_submenu(res.MENU_PROJECT)
+    project_menu = menu.add_submenu(res.menu.PROJECT)
     project_menu.add_item(
-        res.MENU_NEW_PROJECT, new_project, accelerator = 'Strg+N'
+        res.menu.NEW_PROJECT, new_project, accelerator = 'Strg+N'
     )
     project_menu.add_item(
-        res.MENU_OPEN_PROJECT, open_project, accelerator = 'Strg+O'
+        res.menu.OPEN_PROJECT, open_project, accelerator = 'Strg+O'
     )
     menu_project_save = project_menu.add_item(
-        res.MENU_SAVE_PROJECT, save_project, accelerator = 'Strg+S'
+        res.menu.SAVE_PROJECT, save_project, accelerator = 'Strg+S'
     )
     menu_project_save_as = project_menu.add_item(
-        res.MENU_SAVE_PROJECT_AS,
+        res.menu.SAVE_PROJECT_AS,
         save_project_as,
         accelerator = 'Strg+Umschalt+S'
     )
     menu_project_close = project_menu.add_item(
-        res.MENU_CLOSE_PROJECT, close_project, accelerator = 'Strg+W'
+        res.menu.CLOSE_PROJECT, close_project, accelerator = 'Strg+W'
     )
     
     # Subproject menu
-    subproject_menu = menu.add_submenu(res.MENU_SUBPROJECT)
-    subproject_menu.add_item(res.MENU_NEW_SUBPROJECT, new_subproject)
-    subproject_menu.add_item(res.MENU_CONTINUE_SUBPROJECT, continue_subproject)
+    subproject_menu = menu.add_submenu(res.menu.SUBPROJECT)
+    subproject_menu.add_item(res.menu.NEW_SUBPROJECT, new_subproject)
+    subproject_menu.add_item(res.menu.CONTINUE_SUBPROJECT, continue_subproject)
     menu_subproject_close = subproject_menu.add_item(
-        res.MENU_CLOSE_SUBPROJECT, close_subproject
+        res.menu.CLOSE_SUBPROJECT, close_subproject
     )
     
     # Day menu
     day_menu = menu.add_submenu(res.DAY)
-    day_menu.add_item(res.MENU_START_PAUSE_DAY, start_pause_day)
+    day_menu.add_item(res.menu.START_PAUSE_DAY, start_pause_day)
     menu_day_stop = day_menu.add_item(res.STOP, stop_day)
     day_menu.add_seperator()
     day_menu.add_item(
-        res.MENU_ATTACH_DAY_TO_SUBPROJECT, attach_day_to_subproject
+        res.menu.ATTACH_DAY_TO_SUBPROJECT, attach_day_to_subproject
     )
     
     return menu
