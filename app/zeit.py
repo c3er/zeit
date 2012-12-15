@@ -18,13 +18,19 @@ con = None
 
 main_menu = None
 
+# Widgets of interest ##########################################################
+menu_project_new = None
 menu_project_save = None
 menu_project_save_as = None
 menu_project_close = None
+menu_subproject_continue = None
 menu_subproject_close = None
 menu_day_stop = None
+menu_day_assign_subproject = None
 
 period_button = None
+day_stop_button = None
+################################################################################
 
 class CanDisabled:
     def disable(self):
@@ -76,19 +82,21 @@ class MenuItem(CanDisabled):
         self.command = command
 
 # Helper functions #############################################################
-def _widget_config(tk_func, menu_func):
+def disable(widget):
     if isinstance(widget, (tkinter.Button, ttk.Button)):
-        tk_func()
+        widget.config(state = 'disabled')
     elif isinstance(widget, (SubMenu, MenuItem)):
-        menu_func()
+        widget.disable()
     else:
         raise TypeError()
 
-def disable(widget):
-    _widget_config(curry(widget.config, state = 'disabled'), widget.disable)
-
 def enable(widget):
-    _widget_config(curry(widget.config, state = 'enabled'), widget.enable)
+    if isinstance(widget, (tkinter.Button, ttk.Button)):
+        widget.config(state = 'enabled')
+    elif isinstance(widget, (SubMenu, MenuItem)):
+        widget.enable()
+    else:
+        raise TypeError()
 
 def create_button(frame, label, command):
     button = ttk.Button(frame, text = label, command = command)
@@ -98,7 +106,17 @@ def create_button(frame, label, command):
 
 # Handlers #####################################################################
 def adjust_state(con):
-    pass
+    if con.isnew:
+        disable(menu_project_new)
+        disable(menu_project_save)
+        disable(menu_project_close)
+        disable(menu_subproject_continue)
+        disable(menu_subproject_close)
+        disable(menu_day_stop)
+        disable(menu_day_assign_subproject)
+        disable(day_stop_button)
+    else:
+        pass
     
 def start_pause_period():
     if not con.started:
@@ -160,11 +178,14 @@ def attach_day_to_subproject():
 
 # Appearence ###################################################################
 def create_main_menu(root):
+    global menu_project_new
     global menu_project_save
     global menu_project_save_as
     global menu_project_close
+    global menu_subproject_continue
     global menu_subproject_close
     global menu_day_stop
+    global menu_day_assign_subproject
     
     menu = Menu(root)
     
@@ -174,7 +195,7 @@ def create_main_menu(root):
     
     # Project menu
     project_menu = menu.add_submenu(res.menu.PROJECT)
-    project_menu.add_item(
+    menu_project_new = project_menu.add_item(
         res.menu.NEW_PROJECT, new_project, accelerator = 'Strg+N'
     )
     project_menu.add_item(
@@ -195,7 +216,9 @@ def create_main_menu(root):
     # Subproject menu
     subproject_menu = menu.add_submenu(res.menu.SUBPROJECT)
     subproject_menu.add_item(res.menu.NEW_SUBPROJECT, new_subproject)
-    subproject_menu.add_item(res.menu.CONTINUE_SUBPROJECT, continue_subproject)
+    menu_subproject_continue = subproject_menu.add_item(
+        res.menu.CONTINUE_SUBPROJECT, continue_subproject
+    )
     menu_subproject_close = subproject_menu.add_item(
         res.menu.CLOSE_SUBPROJECT, close_subproject
     )
@@ -205,7 +228,7 @@ def create_main_menu(root):
     day_menu.add_item(res.menu.START_PAUSE_DAY, start_pause_day)
     menu_day_stop = day_menu.add_item(res.STOP, stop_day)
     day_menu.add_seperator()
-    day_menu.add_item(
+    menu_day_assign_subproject = day_menu.add_item(
         res.menu.ATTACH_DAY_TO_SUBPROJECT, attach_day_to_subproject
     )
     
@@ -213,11 +236,12 @@ def create_main_menu(root):
 
 def toolbar(parent):
     global period_button
+    global day_stop_button
     
     frame = ttk.Frame(parent)
     
     period_button = create_button(frame, res.BUTTON_START, start_pause_period)
-    create_button(frame, res.BUTTON_END_DAY, end_day)
+    day_stop_button = create_button(frame, res.BUTTON_END_DAY, end_day)
     
     return frame
 

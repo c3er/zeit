@@ -29,6 +29,7 @@ class Controller:
         self.path = None
         self.project = None
         self.time_widget = None
+        self.isnew = True
         self.new_project()
         
     # Properties ###############################################################
@@ -49,6 +50,7 @@ class Controller:
     modified = property(get_modified)
     ############################################################################
     
+    # Internal helper functions ################################################
     def _basic_wrapper(self, condition, func):
         '''A wrapper function, which calls the given function, if the given
         condition evaluates to "True", sets the state to "modified" and updates
@@ -62,6 +64,7 @@ class Controller:
         if condition:
             func()
             self._modified = True
+            self.isnew = False
             self.update()
             
     def _ext_wrapper(self, condition, func, period, name):
@@ -80,16 +83,26 @@ class Controller:
             func()
             self.time_widget[name].period = period
             self._modified = True
+            self.isnew = False
             self.update()
+    ############################################################################
+    
+    def update(self):
+        self.state_handler(self)
+        #...
         
     def new_project(self, name = res.UNNAMED):
         path = os.path.join(sys.path[0], res.DEFAULT_FILE)
         self.project = fio.load(path)
         self.time_widget = timelib.TimeWidget(self.root, self.project)
+        self.isnew = True
+        self.update()
     
     def open_project(self, path):
         self.project = fio.load(path)
         self.time_widget = timelib.TimeWidget(self.root, self.project)
+        self.isnew = False
+        self.update()
     
     def save_project(self, path = None):
         if path is not None:
@@ -125,7 +138,3 @@ class Controller:
     
     def stop(self):
         self._basic_wrapper(self.started, self.project.stop)
-    
-    def update(self):
-        self.state_handler(self)
-        #...
