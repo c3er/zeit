@@ -5,6 +5,7 @@ import tkinter
 import tkinter.filedialog
 import tkinter.ttk as ttk
 
+import gui
 import controller
 import timelib
 import res
@@ -32,89 +33,17 @@ period_button = None
 day_stop_button = None
 ################################################################################
 
-class CanDisabled:
-    def disable(self):
-        self.parent.tkmenu.entryconfigure(self.label, state = 'disabled')
-    
-    def enable(self):
-        self.parent.tkmenu.entryconfigure(self.label, state = 'enabled')
-
-class Menu:
-    def __init__(self, tkparent):
-        self.children = []
-        
-        if not isinstance(self, SubMenu):
-            tkparent.option_add('*tearOff', False)
-            
-        self.tkmenu = tkinter.Menu(tkparent)
-        
-        if not isinstance(self, SubMenu):
-            tkparent.config(menu = self.tkmenu)
-            
-        self.tkparent = tkparent
-        self.label = None
-    
-    def add_submenu(self, label):
-        submenu = SubMenu(label, self, self.tkmenu)
-        self.tkmenu.add_cascade(label = label, menu = submenu.tkmenu)
-        self.children.append(submenu)
-        return submenu
-    
-    def add_item(self, label, command, *args, **kw):
-        item = MenuItem(self, label, command)
-        self.tkmenu.add_command(*args, label = label, command = command, **kw)
-        self.children.append(item)
-        return item
-    
-    def add_seperator(self):
-        self.tkmenu.add_separator()
-    
-class SubMenu(Menu, CanDisabled):
-    def __init__(self, label, parent, *args, **kw):
-        super().__init__(*args, **kw)
-        self.parent = parent
-        self.label = label
-    
-class MenuItem(CanDisabled):
-    def __init__(self, parent, label, command):
-        self.parent = parent
-        self.label = label
-        self.command = command
-
-# Helper functions #############################################################
-def disable(widget):
-    if isinstance(widget, (tkinter.Button, ttk.Button)):
-        widget.config(state = 'disabled')
-    elif isinstance(widget, (SubMenu, MenuItem)):
-        widget.disable()
-    else:
-        raise TypeError()
-
-def enable(widget):
-    if isinstance(widget, (tkinter.Button, ttk.Button)):
-        widget.config(state = 'enabled')
-    elif isinstance(widget, (SubMenu, MenuItem)):
-        widget.enable()
-    else:
-        raise TypeError()
-
-def create_button(frame, label, command):
-    button = ttk.Button(frame, text = label, command = command)
-    button.pack(side = 'left')
-    return button
-################################################################################
-
 # Handlers #####################################################################
 def adjust_state(con):
     if con.isnew:
-        disable(menu_project_new)
-        disable(menu_project_save)
-        disable(menu_project_close)
-        disable(menu_subproject_continue)
-        disable(menu_subproject_close)
-        disable(menu_day_stop)
-        disable(menu_day_assign_subproject)
-        disable(day_stop_button)
+        gui.disable(menu_project_new)
+        gui.disable(menu_project_save)
+        gui.disable(menu_project_close)
+        gui.disable(menu_subproject_continue)
+        gui.disable(menu_subproject_close)
+        gui.disable(menu_day_stop)
+        gui.disable(menu_day_assign_subproject)
+        gui.disable(day_stop_button)
     else:
         pass
     
@@ -192,7 +121,7 @@ def create_main_menu(root):
     global menu_day_stop
     global menu_day_assign_subproject
     
-    menu = Menu(root)
+    menu = gui.Menu(root)
     
     # File menu
     file_menu = menu.add_submenu(res.menu.FILE)
@@ -245,8 +174,10 @@ def toolbar(parent):
     
     frame = ttk.Frame(parent)
     
-    period_button = create_button(frame, res.BUTTON_START, start_pause_period)
-    day_stop_button = create_button(frame, res.BUTTON_END_DAY, end_day)
+    period_button = gui.create_button(
+        frame, res.BUTTON_START, start_pause_period
+    )
+    day_stop_button = gui.create_button(frame, res.BUTTON_END_DAY, end_day)
     
     return frame
 
