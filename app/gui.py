@@ -6,12 +6,12 @@
 import tkinter
 import tkinter.ttk as ttk
 
-class CanDisabled:
+class _CanDisabled:
     def disable(self):
         self.parent.tkmenu.entryconfigure(self.label, state = 'disabled')
     
     def enable(self):
-        self.parent.tkmenu.entryconfigure(self.label, state = 'enabled')
+        self.parent.tkmenu.entryconfigure(self.label, state = 'normal')
 
 class Menu:
     def __init__(self, tkparent):
@@ -43,13 +43,13 @@ class Menu:
     def add_seperator(self):
         self.tkmenu.add_separator()
     
-class SubMenu(Menu, CanDisabled):
+class SubMenu(Menu, _CanDisabled):
     def __init__(self, label, parent, *args, **kw):
         super().__init__(*args, **kw)
         self.parent = parent
         self.label = label
     
-class MenuItem(CanDisabled):
+class MenuItem(_CanDisabled):
     def __init__(self, parent, label, command):
         self.parent = parent
         self.label = label
@@ -71,7 +71,7 @@ def enable(widget):
     else:
         raise TypeError()
 
-def create_button(frame, label, command):
-    button = ttk.Button(frame, text = label, command = command)
+def create_button(frame, label, command, *args, **kw):
+    button = ttk.Button(frame, *args, text = label, command = command, **kw)
     button.pack(side = 'left')
     return button

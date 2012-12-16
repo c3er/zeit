@@ -91,6 +91,7 @@ class Controller:
         self.state_handler(self)
         #...
         
+    # Interface functions for the GUI handler ##################################
     def new_project(self, name = res.UNNAMED):
         path = os.path.join(sys.path[0], res.DEFAULT_FILE)
         self.project = fio.load(path)
@@ -138,3 +139,4 @@ class Controller:
     
     def stop(self):
         self._basic_wrapper(self.started, self.project.stop)
+    ############################################################################

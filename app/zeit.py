@@ -15,6 +15,8 @@ from misc import *
 MIN_SIZE_X = 250
 MIN_SIZE_Y = 100
 
+PERIOD_BUTTON_WIDTH = 15
+
 con = None
 
 main_menu = None
@@ -22,7 +24,6 @@ main_menu = None
 # Widgets of interest ##########################################################
 menu_project_new = None
 menu_project_save = None
-menu_project_save_as = None
 menu_project_close = None
 menu_subproject_continue = None
 menu_subproject_close = None
@@ -44,8 +45,15 @@ def adjust_state(con):
         gui.disable(menu_day_stop)
         gui.disable(menu_day_assign_subproject)
         gui.disable(day_stop_button)
-    else:
-        pass
+    elif con.started:
+        gui.disable(menu_subproject_continue)
+        gui.disable(menu_subproject_close)
+        gui.disable(menu_day_assign_subproject)
+        gui.enable(menu_project_new)
+        gui.enable(menu_project_save)
+        gui.enable(menu_project_close)
+        gui.enable(menu_day_stop)
+        gui.enable(day_stop_button)
     
     if con.paused or not con.started:
         period_button.config(text = res.BUTTON_START)
@@ -104,7 +112,7 @@ def start_pause_day():
     pass
 
 def stop_day():
-    pass
+    con.stop()
 
 def attach_day_to_subproject():
     pass
@@ -114,7 +122,6 @@ def attach_day_to_subproject():
 def create_main_menu(root):
     global menu_project_new
     global menu_project_save
-    global menu_project_save_as
     global menu_project_close
     global menu_subproject_continue
     global menu_subproject_close
@@ -138,7 +145,7 @@ def create_main_menu(root):
     menu_project_save = project_menu.add_item(
         res.menu.SAVE_PROJECT, save_project, accelerator = 'Strg+S'
     )
-    menu_project_save_as = project_menu.add_item(
+    project_menu.add_item(
         res.menu.SAVE_PROJECT_AS,
         save_project_as,
         accelerator = 'Strg+Umschalt+S'
@@ -175,7 +182,10 @@ def toolbar(parent):
     frame = ttk.Frame(parent)
     
     period_button = gui.create_button(
-        frame, res.BUTTON_START, start_pause_period
+        frame, 
+        res.BUTTON_START,
+        start_pause_period,
+        width = -PERIOD_BUTTON_WIDTH
     )
     day_stop_button = gui.create_button(frame, res.BUTTON_END_DAY, end_day)
     
