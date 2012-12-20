@@ -68,9 +68,6 @@ def start_pause_period():
     else:
         con.resume()
 
-def end_day():
-    pass
-
 def new_project():
     pass
 
@@ -187,7 +184,7 @@ def toolbar(parent):
         start_pause_period,
         width = -PERIOD_BUTTON_WIDTH
     )
-    day_stop_button = gui.create_button(frame, res.BUTTON_END_DAY, end_day)
+    day_stop_button = gui.create_button(frame, res.BUTTON_END_DAY, stop_day)
     
     return frame
 

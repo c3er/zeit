@@ -54,6 +54,26 @@ class MenuItem(_CanDisabled):
         self.parent = parent
         self.label = label
         self.command = command
+        
+# This stuff was originally from some demos ####################################
+class AutoScrollbar(ttk.Scrollbar):
+    '''A scrollbar that hides it self if it's not needed.
+    Only works if you use the grid geometry manager.'''
+    
+    def set(self, lo, hi):
+        if float(lo) <= 0.0 and float(hi) >= 1.0:
+            # grid_remove is currently missing from Tkinter!
+            self.tk.call("grid", "remove", self)
+        else:
+            self.grid()
+        ttk.Scrollbar.set(self, lo, hi)
+        
+    def pack(self, **kw):
+        raise TclError("Can not use pack with this widget")
+    
+    def place(self, **kw):
+        raise TclError("Can not use place with this widget")
+################################################################################
 
 def disable(widget):
     if isinstance(widget, (tkinter.Button, ttk.Button)):
