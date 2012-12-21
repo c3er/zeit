@@ -22,9 +22,8 @@ con = None
 main_menu = None
 
 # Widgets of interest ##########################################################
-menu_project_new = None
-menu_project_save = None
-menu_project_close = None
+menu_file_new = None
+menu_file_close = None
 menu_subproject_continue = None
 menu_subproject_close = None
 menu_day_stop = None
@@ -37,9 +36,8 @@ day_stop_button = None
 # Handlers #####################################################################
 def adjust_state(con):
     if con.isnew:
-        gui.disable(menu_project_new)
-        gui.disable(menu_project_save)
-        gui.disable(menu_project_close)
+        gui.disable(menu_file_new)
+        gui.disable(menu_file_close)
         gui.disable(menu_subproject_continue)
         gui.disable(menu_subproject_close)
         gui.disable(menu_day_stop)
@@ -49,9 +47,8 @@ def adjust_state(con):
         gui.disable(menu_subproject_continue)
         gui.disable(menu_subproject_close)
         gui.disable(menu_day_assign_subproject)
-        gui.enable(menu_project_new)
-        gui.enable(menu_project_save)
-        gui.enable(menu_project_close)
+        gui.enable(menu_file_new)
+        gui.enable(menu_file_close)
         gui.enable(menu_day_stop)
         gui.enable(day_stop_button)
     
@@ -117,9 +114,8 @@ def attach_day_to_subproject():
 
 # Appearence ###################################################################
 def create_main_menu(root):
-    global menu_project_new
-    global menu_project_save
-    global menu_project_close
+    global menu_file_new
+    global menu_file_close
     global menu_subproject_continue
     global menu_subproject_close
     global menu_day_stop
@@ -129,27 +125,25 @@ def create_main_menu(root):
     
     # File menu
     file_menu = menu.add_submenu(res.menu.FILE)
-    file_menu.add_item(res.STOP, root.destroy, accelerator = 'Alt+F4')
-    
-    # Project menu
-    project_menu = menu.add_submenu(res.menu.PROJECT)
-    menu_project_new = project_menu.add_item(
+    menu_file_new = file_menu.add_item(
         res.menu.NEW_PROJECT, new_project, accelerator = 'Strg+N'
     )
-    project_menu.add_item(
+    file_menu.add_item(
         res.menu.OPEN_PROJECT, open_project, accelerator = 'Strg+O'
     )
-    menu_project_save = project_menu.add_item(
+    file_menu.add_item(
         res.menu.SAVE_PROJECT, save_project, accelerator = 'Strg+S'
     )
-    project_menu.add_item(
+    file_menu.add_item(
         res.menu.SAVE_PROJECT_AS,
         save_project_as,
         accelerator = 'Strg+Umschalt+S'
     )
-    menu_project_close = project_menu.add_item(
+    menu_file_close = file_menu.add_item(
         res.menu.CLOSE_PROJECT, close_project, accelerator = 'Strg+W'
     )
+    file_menu.add_seperator()
+    file_menu.add_item(res.STOP, root.destroy, accelerator = 'Alt+F4')
     
     # Subproject menu
     subproject_menu = menu.add_submenu(res.menu.SUBPROJECT)

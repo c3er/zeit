@@ -69,10 +69,10 @@ class AutoScrollbar(ttk.Scrollbar):
         ttk.Scrollbar.set(self, lo, hi)
         
     def pack(self, **kw):
-        raise TclError("Can not use pack with this widget")
+        raise tkinter.TclError("Can not use pack with this widget")
     
     def place(self, **kw):
-        raise TclError("Can not use place with this widget")
+        raise tkinter.TclError("Can not use place with this widget")
 ################################################################################
 
 def disable(widget):
