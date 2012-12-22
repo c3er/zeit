@@ -17,11 +17,13 @@ class Menu:
     def __init__(self, tkparent):
         self.children = []
         
+        # XXX...
         if not isinstance(self, SubMenu):
             tkparent.option_add('*tearOff', False)
             
         self.tkmenu = tkinter.Menu(tkparent)
         
+        # ... ugly!
         if not isinstance(self, SubMenu):
             tkparent.config(menu = self.tkmenu)
             

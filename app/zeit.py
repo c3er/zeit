@@ -191,13 +191,16 @@ def bind_events(root):
 ################################################################################
 
 if __name__ == '__main__':
-    # Initializing
+    # Initializing #############################################################
     root = tkinter.Tk()
     root.minsize(MIN_SIZE_X, MIN_SIZE_Y)
     root.wm_title(res.APP_TITLE)
+    
     main_menu = create_main_menu(root)
     toolbar(root).pack(anchor = 'n', fill = 'x')
     bind_events(root)
+    
     con = controller.Controller(root, adjust_state)
+    ############################################################################
     
     root.mainloop()
