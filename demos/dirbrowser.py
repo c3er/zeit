@@ -7,14 +7,22 @@ import glob
 import tkinter
 from tkinter import ttk
 
-def autoscroll(sbar, first, last):
-    """Hide and show scrollbar as needed."""
-    first, last = float(first), float(last)
-    if first <= 0 and last >= 1:
-        sbar.grid_remove()
-    else:
-        sbar.grid()
-    sbar.set(first, last)
+class AutoScrollbar(ttk.Scrollbar):
+    '''A scrollbar that hides it self if it's not needed.
+    Only works if you use the grid geometry manager.
+    '''
+    def set(self, lo, hi):
+        if float(lo) <= 0.0 and float(hi) >= 1.0:
+            self.grid_remove()
+        else:
+            self.grid()
+        super().set(lo, hi)
+        
+    def pack(self, **kw):
+        raise tkinter.TclError("Can not use pack with this widget")
+    
+    def place(self, **kw):
+        raise tkinter.TclError("Can not use place with this widget")
 
 # Treeview related #############################################################
 def populate_tree(tree, node):
@@ -53,7 +61,7 @@ def populate_roots(tree):
     populate_tree(tree, node)
 ################################################################################
 
-# Handler ######################################################################
+# Handlers #####################################################################
 def update_tree(event):
     tree = event.widget
     populate_tree(tree, tree.focus())
@@ -72,18 +80,18 @@ def change_dir(event):
 # "Main function" ##############################################################
 root = tkinter.Tk()
 
-vsb = ttk.Scrollbar(orient = "vertical")
-hsb = ttk.Scrollbar(orient = "horizontal")
+vsb = AutoScrollbar(orient = "vertical")
+hsb = AutoScrollbar(orient = "horizontal")
 
 tree = ttk.Treeview(
     columns = ("fullpath", "type", "size"),
     displaycolumns = "size",
-    yscrollcommand = lambda f, l: autoscroll(vsb, f, l),
-    xscrollcommand = lambda f, l: autoscroll(hsb, f, l)
+    yscrollcommand = vsb.set,
+    xscrollcommand = hsb.set
 )
 
-vsb['command'] = tree.yview
-hsb['command'] = tree.xview
+vsb.configure(command = tree.yview)
+hsb.configure(command = tree.xview)
 
 tree.heading("#0", text = "Directory Structure", anchor = 'w')
 tree.heading("size", text = "File Size", anchor = 'w')
