@@ -54,6 +54,10 @@ class TimeStamp:
         self._hours = hours
         self._minutes = minutes
         self._seconds = seconds
+        
+    def _get_time(self, t):
+        self._split_length()
+        return t
     ############################################################################
 
     # Properties ###############################################################
@@ -66,24 +70,19 @@ class TimeStamp:
         return self.current - self.starttime
     
     def get_weeks(self):
-        self._split_length()
-        return self._weeks
+        return self._get_time(self._weeks)
     
     def get_days(self):
-        self._split_length()
-        return self._days
+        return self._get_time(self._days)
     
     def get_hours(self):
-        self._split_length()
-        return self._hours
+        return self._get_time(self._hours)
     
     def get_minutes(self):
-        self._split_length()
-        return self._minutes
+        return self._get_time(self._minutes)
     
     def get_seconds(self):
-        self._split_length()
-        return self._seconds
+        return self._get_time(self._seconds)
     
     current = property(get_current)
     length = property(get_length)

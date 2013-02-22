@@ -96,13 +96,13 @@ class Controller:
         path = os.path.join(sys.path[0], res.DEFAULT_FILE)
         self.project = fio.load(path)
         self.time_widget = timelib.TimeWidget(self.root, self.project)
-        self.isnew = True
         self.update()
     
     def open_project(self, path):
         self.project = fio.load(path)
         self.time_widget = timelib.TimeWidget(self.root, self.project)
         self.isnew = False
+        self.path = path
         self.update()
     
     def save_project(self, path = None):
@@ -112,7 +112,7 @@ class Controller:
         if not self.path:
             raise UnknownPathException()
         else:
-            fio.save(self.project, path)
+            fio.save(self.project, self.path)
             self.update()
     
     def close_project(self):

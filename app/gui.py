@@ -79,7 +79,7 @@ class AutoScrollbar(ttk.Scrollbar):
 def disable(widget):
     if isinstance(widget, (tkinter.Button, ttk.Button)):
         widget.config(state = 'disabled')
-    elif isinstance(widget, (SubMenu, MenuItem)):
+    elif isinstance(widget, _CanDisabled):
         widget.disable()
     else:
         raise TypeError()
@@ -87,7 +87,7 @@ def disable(widget):
 def enable(widget):
     if isinstance(widget, (tkinter.Button, ttk.Button)):
         widget.config(state = 'enabled')
-    elif isinstance(widget, (SubMenu, MenuItem)):
+    elif isinstance(widget, _CanDisabled):
         widget.enable()
     else:
         raise TypeError()
