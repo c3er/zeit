@@ -7,21 +7,23 @@ import tkinter.ttk as ttk
 
 import gui
 import controller
-import timelib
 import res
 import res.menu
 from misc import *
 
+# Constants ####################################################################
 MIN_SIZE_X = 250
 MIN_SIZE_Y = 100
 
 PERIOD_BUTTON_WIDTH = 15
+################################################################################
 
+# Controller object
 con = None
 
+# Widgets of interest ##########################################################
 main_menu = None
 
-# Widgets of interest ##########################################################
 menu_file_new = None
 menu_file_close = None
 menu_subproject_continue = None
@@ -192,10 +194,13 @@ def bind_events(root):
 
 if __name__ == '__main__':
     # Initializing #############################################################
+    
+    # Initialize main window
     root = tkinter.Tk()
     root.minsize(MIN_SIZE_X, MIN_SIZE_Y)
     root.wm_title(res.APP_TITLE)
     
+    # Initialize the GUI elements
     main_menu = create_main_menu(root)
     toolbar(root).pack(anchor = 'n', fill = 'x')
     bind_events(root)

@@ -34,10 +34,26 @@ class TimeStamp:
         self._seconds = 0
     
     def __str__(self):
+        '''Needs to be implemented by inheriting classes.'''
         raise NotImplementedError()
     
     # Helper functions #########################################################
     def _split_times(self, t, length):
+        '''Helper function to split a great number of a period (e.g. seconds)
+        into the corresponding value of the greater period (e.g. minutes) and
+        the remaining part of the given period.
+        
+        Parameters:
+            - t: The value, which shall be splitted.
+            - length: the length of the bigger period. E.g. the value would be
+              60 if "t" would be a value in seconds and the bigger period shall
+              be minutes.
+        
+        Returns:
+            A tuple, containing two Values:
+                1. The value in the bigger period.
+                2. The remaining part of the smaller period.
+        '''
         if t >= length:
             val, t = divmod(t, length)
         else:
@@ -130,13 +146,13 @@ class WorkingDay(Period):
         self.paused = False
         self.project = project
         
-    # Properties ###############################################################
     def _get_current_period(self, cls):
         for p in reversed(self.periods):
             if isinstance(p, cls):
                 return p
         raise PeriodError('No "' + cls.__name__ + '" period found in this day.')
     
+    # Properties ###############################################################
     def get_length(self):
         length = datetime.timedelta()
         for p in self.periods:
