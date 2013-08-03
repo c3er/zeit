@@ -209,7 +209,7 @@ class Project(TimeStamp):
         self.parent_project = None
         self.started = False
         
-        # The start/stop mechanic from the TimeStamp class
+        # The start/stop mechanism from the TimeStamp class
         # is not of interest here
         self.stopped = True
         

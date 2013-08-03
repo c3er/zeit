@@ -21,7 +21,7 @@ class Controller:
         Parameters:
         - root: Toplevel widget of Tk.
         - state_handler: A handler function, which updates the GUI,
-          depending on the internal state of the controller.
+          depending on the state of the controller.
         '''
         self.root = root
         self.state_handler = state_handler
