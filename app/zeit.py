@@ -151,10 +151,12 @@ def create_main_menu(root):
     subproject_menu = menu.add_submenu(res.menu.SUBPROJECT)
     subproject_menu.add_item(res.menu.NEW_SUBPROJECT, new_subproject)
     menu_subproject_continue = subproject_menu.add_item(
-        res.menu.CONTINUE_SUBPROJECT, continue_subproject
+        res.menu.CONTINUE_SUBPROJECT,
+        continue_subproject
     )
     menu_subproject_close = subproject_menu.add_item(
-        res.menu.CLOSE_SUBPROJECT, close_subproject
+        res.menu.CLOSE_SUBPROJECT,
+        close_subproject
     )
     
     # Day menu
@@ -163,7 +165,8 @@ def create_main_menu(root):
     menu_day_stop = day_menu.add_item(res.STOP, stop_day)
     day_menu.add_seperator()
     menu_day_assign_subproject = day_menu.add_item(
-        res.menu.ATTACH_DAY_TO_SUBPROJECT, attach_day_to_subproject
+        res.menu.ATTACH_DAY_TO_SUBPROJECT,
+        attach_day_to_subproject
     )
     
     return menu

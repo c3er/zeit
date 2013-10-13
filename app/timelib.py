@@ -154,7 +154,7 @@ class WorkingDay(Period):
     
     # Properties ###############################################################
     def get_length(self):
-        length = datetime.timedelta()
+        length = datetime.timedelta()  # 0
         for p in self.periods:
             if isinstance(p, Working):
                 length += p.length
