@@ -5,7 +5,7 @@ Based on the demo found in Tk 8.5 library/demos/browse
 import os
 import glob
 import tkinter
-from tkinter import ttk
+import tkinter.ttk as ttk
 
 class AutoScrollbar(ttk.Scrollbar):
     '''A scrollbar that hides it self if it's not needed.
@@ -23,6 +23,10 @@ class AutoScrollbar(ttk.Scrollbar):
     
     def place(self, **kw):
         raise tkinter.TclError("Can not use place with this widget")
+    
+class TreeWidget:
+    def __init__(self):
+        pass
 
 # Treeview related #############################################################
 def populate_tree(tree, node):
@@ -32,12 +36,15 @@ def populate_tree(tree, node):
     path = tree.set(node, "fullpath")
     tree.delete(*tree.get_children(node))
 
+    # Only put link to the parent directory if the current directory is not
+    # the root directory.
     parent = tree.parent(node)
-    special_dirs = [] if parent else glob.glob('.') + glob.glob('..')
-
-    for p in special_dirs + os.listdir(path):
+    special_dirs = [] if parent else glob.glob('..')
+    
+    all_dirs = special_dirs + os.listdir(path)
+    for p in all_dirs:
         ptype = None
-        p = os.path.join(path, p).replace('\\', '/')
+        p = os.path.join(path, p)
         if os.path.isdir(p):
             ptype = "directory"
         elif os.path.isfile(p):
@@ -54,9 +61,8 @@ def populate_tree(tree, node):
             size = os.stat(p).st_size
             tree.set(id, "size", "%d bytes" % size)
 
-
 def populate_roots(tree):
-    dir = os.path.abspath('.').replace('\\', '/')
+    dir = os.path.abspath('.')
     node = tree.insert('', 'end', text = dir, values = [dir, "directory"])
     populate_tree(tree, node)
 ################################################################################
