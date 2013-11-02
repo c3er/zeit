@@ -5,7 +5,7 @@ Based on the demo found in Tk 8.5 library/demos/browse
 import os
 import glob
 import tkinter
-import tkinter.ttk as ttk
+from tkinter import ttk
 
 class AutoScrollbar(ttk.Scrollbar):
     '''A scrollbar that hides it self if it's not needed.
@@ -36,15 +36,13 @@ def populate_tree(tree, node):
     path = tree.set(node, "fullpath")
     tree.delete(*tree.get_children(node))
 
-    # Only put link to the parent directory if the current directory is not
-    # the root directory.
     parent = tree.parent(node)
-    special_dirs = [] if parent else glob.glob('..')
-    
-    all_dirs = special_dirs + os.listdir(path)
-    for p in all_dirs:
+    special_dirs = [] if parent else glob.glob('.') + glob.glob('..')
+
+    for p in special_dirs + os.listdir(path):
         ptype = None
-        p = os.path.join(path, p)
+        p = os.path.join(path, p).replace('\\', '/')
+        
         if os.path.isdir(p):
             ptype = "directory"
         elif os.path.isfile(p):
@@ -61,8 +59,9 @@ def populate_tree(tree, node):
             size = os.stat(p).st_size
             tree.set(id, "size", "%d bytes" % size)
 
+
 def populate_roots(tree):
-    dir = os.path.abspath('.')
+    dir = os.path.abspath('.').replace('\\', '/')
     node = tree.insert('', 'end', text = dir, values = [dir, "directory"])
     populate_tree(tree, node)
 ################################################################################
@@ -83,36 +82,38 @@ def change_dir(event):
             populate_roots(tree)
 ################################################################################
 
-# "Main function" ##############################################################
-root = tkinter.Tk()
-
-vsb = AutoScrollbar(orient = "vertical")
-hsb = AutoScrollbar(orient = "horizontal")
-
-tree = ttk.Treeview(
-    columns = ("fullpath", "type", "size"),
-    displaycolumns = "size",
-    yscrollcommand = vsb.set,
-    xscrollcommand = hsb.set
-)
-
-vsb.configure(command = tree.yview)
-hsb.configure(command = tree.xview)
-
-tree.heading("#0", text = "Directory Structure", anchor = 'w')
-tree.heading("size", text = "File Size", anchor = 'w')
-tree.column("size", stretch = 0, width = 100)
-
-populate_roots(tree)
-tree.bind('<<TreeviewOpen>>', update_tree)
-tree.bind('<Double-Button-1>', change_dir)
-
-# Arrange the tree and its scrollbars in the toplevel
-tree.grid(column = 0, row = 0, sticky = 'nswe')
-vsb.grid(column = 1, row = 0, sticky = 'ns')
-hsb.grid(column = 0, row = 1, sticky = 'ew')
-root.grid_columnconfigure(0, weight = 1)
-root.grid_rowconfigure(0, weight = 1)
-
-root.mainloop()
-################################################################################
+def main():
+    root = tkinter.Tk()
+    
+    vsb = AutoScrollbar(orient = "vertical")
+    hsb = AutoScrollbar(orient = "horizontal")
+    
+    tree = ttk.Treeview(
+        columns = ("fullpath", "type", "size"),
+        displaycolumns = "size",
+        yscrollcommand = vsb.set,
+        xscrollcommand = hsb.set
+    )
+    
+    vsb.configure(command = tree.yview)
+    hsb.configure(command = tree.xview)
+    
+    tree.heading("#0", text = "Directory Structure", anchor = 'w')
+    tree.heading("size", text = "File Size", anchor = 'w')
+    tree.column("size", stretch = 0, width = 100)
+    
+    populate_roots(tree)
+    tree.bind('<<TreeviewOpen>>', update_tree)
+    tree.bind('<Double-Button-1>', change_dir)
+    
+    # Arrange the tree and its scrollbars in the toplevel
+    tree.grid(column = 0, row = 0, sticky = 'nswe')
+    vsb.grid(column = 1, row = 0, sticky = 'ns')
+    hsb.grid(column = 0, row = 1, sticky = 'ew')
+    root.grid_columnconfigure(0, weight = 1)
+    root.grid_rowconfigure(0, weight = 1)
+    
+    root.mainloop()
+    
+if __name__ == '__main__':
+    main()
