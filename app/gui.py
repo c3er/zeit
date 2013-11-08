@@ -7,12 +7,15 @@ import tkinter
 import tkinter.ttk as ttk
 
 class _CanDisabled:
+    '''Helper class to make it possible to disable/enable menu items.'''
+    
     def disable(self):
         self.parent.tkmenu.entryconfigure(self.label, state = 'disabled')
     
     def enable(self):
         self.parent.tkmenu.entryconfigure(self.label, state = 'normal')
 
+# Menu related #################################################################
 class Menu:
     def __init__(self, tkparent):
         self.children = []
@@ -56,24 +59,6 @@ class MenuItem(_CanDisabled):
         self.parent = parent
         self.label = label
         self.command = command
-        
-# This stuff was originally from some demos ####################################
-class AutoScrollbar(ttk.Scrollbar):
-    '''A scrollbar that hides it self if it's not needed.
-    Only works if you use the grid geometry manager.
-    '''
-    def set(self, lo, hi):
-        if float(lo) <= 0.0 and float(hi) >= 1.0:
-            self.grid_remove()
-        else:
-            self.grid()
-        super().set(lo, hi)
-        
-    def pack(self, **kw):
-        raise tkinter.TclError("Can not use pack with this widget")
-    
-    def place(self, **kw):
-        raise tkinter.TclError("Can not use place with this widget")
 ################################################################################
 
 def disable(widget):
@@ -96,3 +81,22 @@ def create_button(frame, label, command, *args, **kw):
     button = ttk.Button(frame, *args, text = label, command = command, **kw)
     button.pack(side = 'left')
     return button
+        
+# This stuff was originally from some demos ####################################
+class AutoScrollbar(ttk.Scrollbar):
+    '''A scrollbar that hides it self if it's not needed.
+    Only works if you use the grid geometry manager.
+    '''
+    def set(self, lo, hi):
+        if float(lo) <= 0.0 and float(hi) >= 1.0:
+            self.grid_remove()
+        else:
+            self.grid()
+        super().set(lo, hi)
+        
+    def pack(self, **kw):
+        raise tkinter.TclError("Can not use pack with this widget")
+    
+    def place(self, **kw):
+        raise tkinter.TclError("Can not use place with this widget")
+################################################################################

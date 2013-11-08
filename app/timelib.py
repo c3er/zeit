@@ -5,6 +5,7 @@ import datetime
 import tkinter
 import tkinter.ttk as ttk
 
+import gui
 import res
 from misc import *
 
@@ -345,4 +346,47 @@ class TimeWidget:
         self.frame = ttk.Frame(self.parent)
         self._build_frame()
         self.frame.pack()
+        
+class ProjectWidget:
+    def __init__(self, parent, project):
+        self.parent = parent
+        self.project = project
+        self.frame = ttk.Frame(parent)
+        #self.frame = self._build_treeview(parent, project)
+        # ...
+        
+    def _connect_project(self, tree, project):
+        pass
+        
+    def _build_treeview(self, parent, project):
+        vsb = gui.AutoScrollbar(orient = 'vertical')
+        hsb = gui.AutoScrollbar(orient = 'horizontal')
+    
+        tree = ttk.Treeview(
+            columns = (
+                res.PROJECT_COLUMN_NAME,
+                res.PROJECT_COLUMN_FROM,
+                res.PROJECT_COLUMN_UNTIL,
+                res.PROJECT_COLUMN_DURATION
+            ),
+            yscrollcommand = vsb.set,
+            xscrollcommand = hsb.set
+        )
+    
+        vsb.configure(command = tree.yview)
+        hsb.configure(command = tree.xview)
+    
+        populate_roots(tree)
+        tree.bind('<<TreeviewOpen>>', self.update_tree)
+        tree.bind('<Double-Button-1>', self.change_project)
+    
+        return tree
+    
+    # Handlers #################################################################
+    def update_tree(self, event):
+        pass
+    
+    def change_project(self, event):
+        pass
+    ############################################################################
 ################################################################################

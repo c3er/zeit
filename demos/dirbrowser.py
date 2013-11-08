@@ -23,10 +23,6 @@ class AutoScrollbar(ttk.Scrollbar):
     
     def place(self, **kw):
         raise tkinter.TclError("Can not use place with this widget")
-    
-class TreeWidget:
-    def __init__(self):
-        pass
 
 # Treeview related #############################################################
 def populate_tree(tree, node):
@@ -74,6 +70,7 @@ def update_tree(event):
 def change_dir(event):
     tree = event.widget
     node = tree.focus()
+    
     if tree.parent(node):
         path = os.path.abspath(tree.set(node, "fullpath"))
         if os.path.isdir(path):

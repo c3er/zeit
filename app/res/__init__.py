@@ -18,4 +18,9 @@ BUTTON_END_DAY = 'Tag beenden'
 DISPLAY_PERIOD = 'Abschnitt'
 DISPLAY_PAUSE = 'Pause'
 
+PROJECT_COLUMN_NAME = 'Name'
+PROJECT_COLUMN_FROM = 'Von'
+PROJECT_COLUMN_UNTIL = 'Bis'
+PROJECT_COLUMN_DURATION = 'Dauer'
+
 FILE_READ_ERROR = 'Konnte Datei nicht lesen'

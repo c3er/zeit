@@ -195,7 +195,9 @@ def bind_events(root):
     root.bind('<Control-w>', lambda event: close_project())
 ################################################################################
 
-if __name__ == '__main__':
+def main():
+    global con
+    
     # Initializing #############################################################
     
     # Initialize main window
@@ -208,7 +210,11 @@ if __name__ == '__main__':
     toolbar(root).pack(anchor = 'n', fill = 'x')
     bind_events(root)
     
+    # The weired thing between GUI and actual data...
     con = controller.Controller(root, adjust_state)
     ############################################################################
     
     root.mainloop()
+
+if __name__ == '__main__':
+    main()

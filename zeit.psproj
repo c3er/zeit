@@ -11,45 +11,72 @@ ClassName=TProjectFilesNode
 
 [Project\ChildNodes\Node0\ChildNodes\Node0]
 ClassName=TProjectFolderNode
-Name=res
+Name=demos
 
 [Project\ChildNodes\Node0\ChildNodes\Node0\ChildNodes\Node0]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]app\res\__init__.py
+FileName=$[Project-Path]demos\dirbrowser.py
 
 [Project\ChildNodes\Node0\ChildNodes\Node0\ChildNodes\Node1]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]app\res\menu.py
+FileName=$[Project-Path]demos\menu-snippet.py
+
+[Project\ChildNodes\Node0\ChildNodes\Node0\ChildNodes\Node2]
+ClassName=TProjectFileNode
+FileName=$[Project-Path]demos\simple_status_bar.py
+
+[Project\ChildNodes\Node0\ChildNodes\Node0\ChildNodes\Node3]
+ClassName=TProjectFileNode
+FileName=$[Project-Path]demos\ttkcalendar.py
 
 [Project\ChildNodes\Node0\ChildNodes\Node0\ChildNodes]
-Count=2
+Count=4
 
 [Project\ChildNodes\Node0\ChildNodes\Node1]
+ClassName=TProjectFolderNode
+Name=res
+
+[Project\ChildNodes\Node0\ChildNodes\Node1\ChildNodes\Node0]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]app\controller.py
+FileName=$[Project-Path]app\res\__init__.py
+
+[Project\ChildNodes\Node0\ChildNodes\Node1\ChildNodes\Node1]
+ClassName=TProjectFileNode
+FileName=$[Project-Path]app\res\menu.py
+
+[Project\ChildNodes\Node0\ChildNodes\Node1\ChildNodes]
+Count=2
 
 [Project\ChildNodes\Node0\ChildNodes\Node2]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]app\fio.py
+FileName=$[Project-Path]app\controller.py
 
 [Project\ChildNodes\Node0\ChildNodes\Node3]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]app\gui.py
+FileName=$[Project-Path]app\default.zeit
 
 [Project\ChildNodes\Node0\ChildNodes\Node4]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]app\misc.py
+FileName=$[Project-Path]app\fio.py
 
 [Project\ChildNodes\Node0\ChildNodes\Node5]
 ClassName=TProjectFileNode
-FileName=$[Project-Path]app\timelib.py
+FileName=$[Project-Path]app\gui.py
 
 [Project\ChildNodes\Node0\ChildNodes\Node6]
+ClassName=TProjectFileNode
+FileName=$[Project-Path]app\misc.py
+
+[Project\ChildNodes\Node0\ChildNodes\Node7]
+ClassName=TProjectFileNode
+FileName=$[Project-Path]app\timelib.py
+
+[Project\ChildNodes\Node0\ChildNodes\Node8]
 ClassName=TProjectFileNode
 FileName=$[Project-Path]app\zeit.py
 
 [Project\ChildNodes\Node0\ChildNodes]
-Count=7
+Count=9
 
 [Project\ChildNodes\Node1]
 ClassName=TProjectRunConfiguationsNode
