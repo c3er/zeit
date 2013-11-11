@@ -370,7 +370,7 @@ class ProjectWidget:
         )
         tree = ttk.Treeview(columns = columns, show = "headings")
         
-        # Set column titles
+        # Set column titles and appearance
         for col in columns:
             tree.heading(col, text = col, anchor = 'w')
             tree.column(col, width = 100)
