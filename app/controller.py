@@ -28,7 +28,9 @@ class Controller:
         self._modified = False
         self.path = None
         self.project = None
+        self.frame = None
         self.time_widget = None
+        self.project_widget = None
         self.isnew = True
         self.new_project()
         
@@ -85,6 +87,23 @@ class Controller:
             self._modified = True
             self.isnew = False
             self.update()
+            
+    def _build_frame(self, parent, project):
+        if self.frame:
+            self.frame.destroy()
+        self.frame = ttk.Frame(parent)
+        
+        self.project_widget = timelib.ProjectWidget(self.frame, project)
+        self.project_widget.frame.pack(
+            side = 'left',
+            fill = 'both',
+            expand = True
+        )
+        
+        self.time_widget = timelib.TimeWidget(self.frame, project)
+        self.time_widget.frame.pack(side = 'left', anchor = 'n')
+        
+        self.frame.pack(fill = 'both', expand = True)
     ############################################################################
     
     def update(self):
@@ -95,12 +114,21 @@ class Controller:
     def new_project(self, name = res.UNNAMED):
         path = os.path.join(sys.path[0], res.DEFAULT_FILE)
         self.project = fio.load(path)
-        self.time_widget = timelib.TimeWidget(self.root, self.project)
+        
+        # Experimental new method
+        #self.time_widget = timelib.TimeWidget(self.root, self.project)
+        #self.time_widget.frame.pack()
+        self._build_frame(self.root, self.project)
+        
         self.update()
     
     def open_project(self, path):
         self.project = fio.load(path)
-        self.time_widget = timelib.TimeWidget(self.root, self.project)
+        
+        # Experimental new method
+        #self.time_widget = timelib.TimeWidget(self.root, self.project)
+        self._build_frame(self.root, self.project)
+        
         self.isnew = False
         self.path = path
         self.update()

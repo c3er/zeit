@@ -345,44 +345,64 @@ class TimeWidget:
             self.frame.destroy()
         self.frame = ttk.Frame(self.parent)
         self._build_frame()
-        self.frame.pack()
         
 class ProjectWidget:
     def __init__(self, parent, project):
-        self.parent = parent
         self.project = project
         self.frame = ttk.Frame(parent)
-        #self.frame = self._build_treeview(parent, project)
-        # ...
+        self.treeview = self._build_treeview(self.frame, project)
+        self._connect_project(self.treeview, project)
         
     def _connect_project(self, tree, project):
         pass
-        
-    def _build_treeview(self, parent, project):
-        vsb = gui.AutoScrollbar(orient = 'vertical')
-        hsb = gui.AutoScrollbar(orient = 'horizontal')
     
-        tree = ttk.Treeview(
-            columns = (
-                res.PROJECT_COLUMN_NAME,
-                res.PROJECT_COLUMN_FROM,
-                res.PROJECT_COLUMN_UNTIL,
-                res.PROJECT_COLUMN_DURATION
-            ),
-            yscrollcommand = vsb.set,
-            xscrollcommand = hsb.set
-        )
-    
-        vsb.configure(command = tree.yview)
-        hsb.configure(command = tree.xview)
-    
-        populate_roots(tree)
+    def _bind_events(self, tree):
         tree.bind('<<TreeviewOpen>>', self.update_tree)
         tree.bind('<Double-Button-1>', self.change_project)
+        tree.bind("<MouseWheel>", self.wheelscroll)
+        
+    def _build_treeview(self, parent, project):
+        columns = (
+            res.PROJECT_COLUMN_NAME,
+            res.PROJECT_COLUMN_FROM,
+            res.PROJECT_COLUMN_UNTIL,
+            res.PROJECT_COLUMN_DURATION
+        )
+        tree = ttk.Treeview(columns = columns, show = "headings")
+        
+        # Set column titles
+        for col in columns:
+            tree.heading(col, text = col, anchor = 'w')
+            tree.column(col, width = 100)
+
+        # Setup the scrollbars
+        vsb = gui.AutoScrollbar(parent,
+            orient = "vertical",
+            command = tree.yview
+        )
+        hsb = gui.AutoScrollbar(parent,
+            orient = "horizontal",
+            command = tree.xview
+        )
+        tree.configure(yscrollcommand = vsb.set, xscrollcommand = hsb.set)
+        tree.grid(column = 0, row = 0, sticky = 'nsew', in_ = parent)
+        vsb.grid(column = 1, row = 0, sticky = 'ns')
+        hsb.grid(column = 0, row = 1, sticky = 'ew')
+
+        parent.grid_columnconfigure(0, weight = 1)
+        parent.grid_rowconfigure(0, weight = 1)
+        
+        self._bind_events(tree)
     
         return tree
     
     # Handlers #################################################################
+    def wheelscroll(self, event):
+        if event.delta > 0:
+            self.tree.yview('scroll', -2, 'units')
+        else:
+            self.tree.yview('scroll', 2, 'units')
+
     def update_tree(self, event):
         pass
     
