@@ -114,21 +114,12 @@ class Controller:
     def new_project(self, name = res.UNNAMED):
         path = os.path.join(sys.path[0], res.DEFAULT_FILE)
         self.project = fio.load(path)
-        
-        # Experimental new method
-        #self.time_widget = timelib.TimeWidget(self.root, self.project)
-        #self.time_widget.frame.pack()
         self._build_frame(self.root, self.project)
-        
         self.update()
     
     def open_project(self, path):
         self.project = fio.load(path)
-        
-        # Experimental new method
-        #self.time_widget = timelib.TimeWidget(self.root, self.project)
         self._build_frame(self.root, self.project)
-        
         self.isnew = False
         self.path = path
         self.update()
