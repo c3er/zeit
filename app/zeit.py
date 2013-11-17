@@ -21,6 +21,14 @@ PERIOD_BUTTON_WIDTH = 15
 # Controller object
 con = None
 
+event_mapping = {
+    '<Control-n>': lambda event: new_project(),
+    '<Control-o>': lambda event: open_project(),
+    '<Control-s>': lambda event: save_project(),
+    '<Control-S>': lambda event: save_project_as(),
+    '<Control-w>': lambda event: close_project(),
+}
+
 # Widgets of interest ##########################################################
 main_menu = None
 
@@ -68,7 +76,7 @@ def start_pause_period():
         con.resume()
 
 def new_project():
-    pass
+    print('new_project')
 
 def open_project():
     path = tkinter.filedialog.askopenfilename(
@@ -93,25 +101,25 @@ def save_project_as():
         con.save_project(path)
 
 def close_project():
-    pass
+    print('close_project')
 
 def new_subproject():
-    pass
+    print('new_subproject')
 
 def continue_subproject():
-    pass
+    print('continue_subproject')
 
 def close_subproject():
-    pass
+    print('close_subproject')
 
 def start_pause_day():
-    pass
+    print('start_pause_day')
 
 def stop_day():
     con.stop()
 
 def attach_day_to_subproject():
-    pass
+    print('attach_day_to_subproject')
 ################################################################################
 
 # Appearence ###################################################################
@@ -186,13 +194,6 @@ def toolbar(parent):
     day_stop_button = gui.create_button(frame, res.BUTTON_END_DAY, stop_day)
     
     return frame
-
-def bind_events(root):
-    root.bind('<Control-n>', lambda event: new_project())
-    root.bind('<Control-o>', lambda event: open_project())
-    root.bind('<Control-s>', lambda event: save_project())
-    root.bind('<Control-S>', lambda event: save_project_as())
-    root.bind('<Control-w>', lambda event: close_project())
 ################################################################################
 
 def main():
@@ -208,7 +209,7 @@ def main():
     # Initialize the GUI elements
     main_menu = create_main_menu(root)
     toolbar(root).pack(anchor = 'n', fill = 'x')
-    bind_events(root)
+    gui.bind_events(root, event_mapping)
     
     # The weired thing between GUI and actual data...
     con = controller.Controller(root, adjust_state)

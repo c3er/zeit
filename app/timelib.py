@@ -348,6 +348,11 @@ class TimeWidget:
         
 class ProjectWidget:
     def __init__(self, parent, project):
+        self.event_mapping = {
+            '<<TreeviewOpen>>': self.update_tree,
+            '<Double-Button-1>': self.change_project,
+            "<MouseWheel>": self.wheelscroll,
+        }
         self.project = project
         self.frame = ttk.Frame(parent)
         self.treeview = self._build_treeview(self.frame, project)
@@ -355,11 +360,6 @@ class ProjectWidget:
         
     def _connect_project(self, tree, project):
         pass
-    
-    def _bind_events(self, tree):
-        tree.bind('<<TreeviewOpen>>', self.update_tree)
-        tree.bind('<Double-Button-1>', self.change_project)
-        tree.bind("<MouseWheel>", self.wheelscroll)
         
     def _build_treeview(self, parent, project):
         columns = (
@@ -392,16 +392,18 @@ class ProjectWidget:
         parent.grid_columnconfigure(0, weight = 1)
         parent.grid_rowconfigure(0, weight = 1)
         
-        self._bind_events(tree)
+        gui.bind_events(tree, self.event_mapping)
     
         return tree
     
     # Handlers #################################################################
     def wheelscroll(self, event):
-        if event.delta > 0:
-            self.tree.yview('scroll', -2, 'units')
-        else:
-            self.tree.yview('scroll', 2, 'units')
+        tree = event.widget
+        if isinstance(tree, ttk.Treeview):
+            if event.delta > 0:
+                tree.yview('scroll', -2, 'units')
+            else:
+                tree.yview('scroll', 2, 'units')
 
     def update_tree(self, event):
         pass

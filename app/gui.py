@@ -81,6 +81,10 @@ def create_button(frame, label, command, *args, **kw):
     button = ttk.Button(frame, *args, text = label, command = command, **kw)
     button.pack(side = 'left')
     return button
+
+def bind_events(widget, event_mapping):
+    for event, func in event_mapping.items():
+        widget.bind(event, func)
         
 # This stuff was originally from some demos ####################################
 class AutoScrollbar(ttk.Scrollbar):
