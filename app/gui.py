@@ -1,13 +1,13 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''Helper module for using Tk.'''
+'Helper module for using Tk.'
 
 import tkinter
 import tkinter.ttk as ttk
 
 class _CanDisabled:
-    '''Helper class to make it possible to disable/enable menu items.'''
+    'Helper class to make it possible to disable/enable menu items.'
     
     def disable(self):
         self.parent.tkmenu.entryconfigure(self.label, state = 'disabled')
@@ -17,6 +17,11 @@ class _CanDisabled:
 
 # Menu related #################################################################
 class Menu:
+    '''Wrapper class over the tkinter.Menu class to add needed features
+    These features are:
+    - A nice tree structure to navigate through.
+    - The possibility to get every item as variable.
+    '''
     def __init__(self, tkparent):
         self.children = []
         
@@ -67,7 +72,7 @@ def disable(widget):
     elif isinstance(widget, _CanDisabled):
         widget.disable()
     else:
-        raise TypeError()
+        raise TypeError(str(type(widget)))
 
 def enable(widget):
     if isinstance(widget, (tkinter.Button, ttk.Button)):
@@ -83,6 +88,13 @@ def create_button(frame, label, command, *args, **kw):
     return button
 
 def bind_events(widget, event_mapping):
+    '''Parameters:
+        - widget: The widget to bind events to.
+        - event_mapping: A dictionary where every key/value pair has the
+          following form:
+          - key: A string, containing the event in TK notation.
+          - value: A handler function, which gets an event object as parameter.
+    '''
     for event, func in event_mapping.items():
         widget.bind(event, func)
         

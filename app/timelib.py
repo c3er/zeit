@@ -1,6 +1,8 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+'Data structures to manage project oriented time recording.'
+
 import datetime
 import tkinter
 import tkinter.ttk as ttk
@@ -35,11 +37,12 @@ class TimeStamp:
         self._seconds = 0
     
     def __str__(self):
-        '''Needs to be implemented by inheriting classes.'''
+        'Needs to be implemented by inheriting classes.'
         raise NotImplementedError()
     
     # Helper functions #########################################################
-    def _split_times(self, t, length):
+    @staticmethod
+    def _split_times(t, length):
         '''Helper function to split a great number of a period (e.g. seconds)
         into the corresponding value of the greater period (e.g. minutes) and
         the remaining part of the given period.
@@ -78,37 +81,35 @@ class TimeStamp:
     ############################################################################
 
     # Properties ###############################################################
-    def get_current(self):
+    @property
+    def current(self):
         if not self.stopped:
             self.endtime = datetime.datetime.today()
         return self.endtime
     
-    def get_length(self):
+    @property
+    def length(self):
         return self.current - self.starttime
     
-    def get_weeks(self):
+    @property
+    def weeks(self):
         return self._get_time(self._weeks)
     
-    def get_days(self):
+    @property
+    def days(self):
         return self._get_time(self._days)
     
-    def get_hours(self):
+    @property
+    def hours(self):
         return self._get_time(self._hours)
     
-    def get_minutes(self):
+    @property
+    def minutes(self):
         return self._get_time(self._minutes)
     
-    def get_seconds(self):
+    @property
+    def seconds(self):
         return self._get_time(self._seconds)
-    
-    current = property(get_current)
-    length = property(get_length)
-    
-    weeks = property(get_weeks)
-    days = property(get_days)
-    hours = property(get_hours)
-    minutes = property(get_minutes)
-    seconds = property(get_seconds)
     ############################################################################
 
     def start(self):
@@ -154,29 +155,28 @@ class WorkingDay(Period):
         raise PeriodError('No "' + cls.__name__ + '" period found in this day.')
     
     # Properties ###############################################################
-    def get_length(self):
+    @property
+    def length(self):
         length = datetime.timedelta()  # 0
         for p in self.periods:
             if isinstance(p, Working):
                 length += p.length
         return length
     
-    def get_current_working(self):
+    @property
+    def current_working(self):
         return self._get_current_period(Working)
     
-    def get_current_pause(self):
+    @property
+    def current_pause(self):
         return self._get_current_period(Pause)
     
-    def get_current_period(self):
+    @property
+    def current_period(self):
         if self.paused:
             return self.current_pause
         else:
             return self.current_working
-    
-    length = property(get_length)
-    current_working = property(get_current_working)
-    current_pause = property(get_current_pause)
-    current_period = property(get_current_period)
     ############################################################################
     
     def start(self):
@@ -224,7 +224,8 @@ class Project(TimeStamp):
         )
         
     # Properties ###############################################################
-    def get_length(self):
+    @property
+    def length(self):
         td = datetime.timedelta()
         for sp in self.subprojects:
             td += sp.length
@@ -232,19 +233,17 @@ class Project(TimeStamp):
             td += wd.length
         return td
     
-    def get_current_day(self):
+    @property
+    def current_day(self):
         return self.current_project.working_days[-1]
     
-    def get_paused(self):
+    @property
+    def paused(self):
         return self.current_day.paused
-    
-    length = property(get_length)
-    current_day = property(get_current_day)
-    paused = property(get_paused)
     ############################################################################
     
     def start(self, subproject = None):
-        '''Starts a new working day of the project.'''
+        'Starts a new working day of the project.'
         if self.stopped:
             self.current_day.start()
             self.started = True
@@ -358,10 +357,33 @@ class ProjectWidget:
         self.treeview = self._build_treeview(self.frame, project)
         self._connect_project(self.treeview, project)
         
+    # Helper functions #########################################################
     def _connect_project(self, tree, project):
         pass
         
     def _build_treeview(self, parent, project):
+        def setup_columns(tree, columns):
+            for col in columns:
+                tree.heading(col, text = col, anchor = 'w')
+                tree.column(col, width = 100)
+                
+        def setup_scrollbars(parent, tree):
+            vsb = gui.AutoScrollbar(parent,
+                orient = "vertical",
+                command = tree.yview
+            )
+            hsb = gui.AutoScrollbar(parent,
+                orient = "horizontal",
+                command = tree.xview
+            )
+            tree.configure(yscrollcommand = vsb.set, xscrollcommand = hsb.set)
+            tree.grid(column = 0, row = 0, sticky = 'nsew', in_ = parent)
+            vsb.grid(column = 1, row = 0, sticky = 'ns')
+            hsb.grid(column = 0, row = 1, sticky = 'ew')
+    
+            parent.grid_columnconfigure(0, weight = 1)
+            parent.grid_rowconfigure(0, weight = 1)
+            
         columns = (
             res.PROJECT_COLUMN_NAME,
             res.PROJECT_COLUMN_FROM,
@@ -370,34 +392,17 @@ class ProjectWidget:
         )
         tree = ttk.Treeview(columns = columns, show = "headings")
         
-        # Set column titles and appearance
-        for col in columns:
-            tree.heading(col, text = col, anchor = 'w')
-            tree.column(col, width = 100)
-
-        # Setup the scrollbars
-        vsb = gui.AutoScrollbar(parent,
-            orient = "vertical",
-            command = tree.yview
-        )
-        hsb = gui.AutoScrollbar(parent,
-            orient = "horizontal",
-            command = tree.xview
-        )
-        tree.configure(yscrollcommand = vsb.set, xscrollcommand = hsb.set)
-        tree.grid(column = 0, row = 0, sticky = 'nsew', in_ = parent)
-        vsb.grid(column = 1, row = 0, sticky = 'ns')
-        hsb.grid(column = 0, row = 1, sticky = 'ew')
-
-        parent.grid_columnconfigure(0, weight = 1)
-        parent.grid_rowconfigure(0, weight = 1)
+        setup_columns(tree, columns)
+        setup_scrollbars(parent, tree)
         
         gui.bind_events(tree, self.event_mapping)
     
         return tree
+    ############################################################################
     
     # Handlers #################################################################
-    def wheelscroll(self, event):
+    @staticmethod
+    def wheelscroll(event):
         tree = event.widget
         if isinstance(tree, ttk.Treeview):
             if event.delta > 0:

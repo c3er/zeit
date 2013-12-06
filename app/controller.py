@@ -1,7 +1,7 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''Mediator between the GUI and the data.'''
+'Mediator between the GUI and the data.'
 
 import sys
 import os
@@ -79,7 +79,8 @@ class Controller:
           evaluates to "True".
         - period: A "Period" object, which will be assigned to the given
           display.
-        - name: The name of the display, which will get another "Period" object.
+        - name: The name of the display, which will have assigned another
+          "Period" object.
         '''
         if condition:
             func()
@@ -111,7 +112,8 @@ class Controller:
         #...
         
     # Interface functions for the GUI handler ##################################
-    def new_project(self, name = res.UNNAMED):
+    def new_project(self):
+        'Loads a default file, containing an empty project and updates the GUI.'
         path = os.path.join(sys.path[0], res.DEFAULT_FILE)
         self.project = fio.load(path)
         self._build_frame(self.root, self.project)

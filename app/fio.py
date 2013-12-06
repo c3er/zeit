@@ -31,14 +31,14 @@ class MarkupReaderBase(html.parser.HTMLParser):
         self.close()
         
     # Properties ###############################################################
-    def get_read_data_flag(self):
+    @property
+    def read_data_flag(self):
         return self._read_data_flag
     
+    @read_data_flag.setter
     def set_read_data_flag(self, val):
         self._read_data_flag = val
         self.tmpdat = ''
-    
-    read_data_flag = property(get_read_data_flag, set_read_data_flag)
     ############################################################################
     
     # Inherited from html.parser.HTMLParser ####################################
@@ -108,20 +108,19 @@ class ProjectFileReader(MarkupReaderBase):
         }
         
     # Properties ###############################################################
-    def get_parent_project(self):
+    @property
+    def parent_project(self):
         if self._project_stack:
             return self._project_stack[-1]
         else:
             return None
         
-    def get_root_project(self):
+    @property
+    def root_project(self):
         if self._project_stack:
             return self._project_stack[0]
         else:
             return self.project
-        
-    parent_project = property(get_parent_project)
-    root_project = property(get_root_project)
     ############################################################################
         
     # Helper functions #########################################################

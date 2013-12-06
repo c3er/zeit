@@ -199,21 +199,21 @@ def toolbar(parent):
 def main():
     global con
     
-    # Initializing #############################################################
+    def init_main_window():
+        root = tkinter.Tk()
+        root.minsize(MIN_SIZE_X, MIN_SIZE_Y)
+        root.wm_title(res.APP_TITLE)
+        return root
     
-    # Initialize main window
-    root = tkinter.Tk()
-    root.minsize(MIN_SIZE_X, MIN_SIZE_Y)
-    root.wm_title(res.APP_TITLE)
+    def init_gui(root):
+        global main_menu
+        main_menu = create_main_menu(root)
+        toolbar(root).pack(anchor = 'n', fill = 'x')
+        gui.bind_events(root, event_mapping)
     
-    # Initialize the GUI elements
-    main_menu = create_main_menu(root)
-    toolbar(root).pack(anchor = 'n', fill = 'x')
-    gui.bind_events(root, event_mapping)
-    
-    # The weired thing between GUI and actual data...
+    root = init_main_window()
+    init_gui(root)
     con = controller.Controller(root, adjust_state)
-    ############################################################################
     
     root.mainloop()
 
