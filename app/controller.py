@@ -35,21 +35,20 @@ class Controller:
         self.new_project()
         
     # Properties ###############################################################
-    def get_started(self):
+    @property
+    def started(self):
         return self.project.started
     
-    def get_paused(self):
+    @property
+    def paused(self):
         return self.project.paused
     
-    def get_modified(self):
+    @property
+    def modified(self):
         if self.started and not self.paused:
             return True
         else:
             return self._modified
-    
-    started = property(get_started)
-    paused = property(get_paused)
-    modified = property(get_modified)
     ############################################################################
     
     # Internal helper functions ################################################

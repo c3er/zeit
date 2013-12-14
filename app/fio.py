@@ -21,8 +21,8 @@ class MarkupReaderBase(html.parser.HTMLParser):
         super().__init__()
         self.tmpdat = ''
         self._read_data_flag = False
-        self.starttags = {}
-        self.endtags = {}
+        self.starttags = self._fill_tagdict('starttag')
+        self.endtags = self._fill_tagdict('endtag')
 
     def __enter__(self):
         return self.__class__()
@@ -36,10 +36,20 @@ class MarkupReaderBase(html.parser.HTMLParser):
         return self._read_data_flag
     
     @read_data_flag.setter
-    def set_read_data_flag(self, val):
+    def read_data_flag(self, val):
         self._read_data_flag = val
         self.tmpdat = ''
     ############################################################################
+    
+    def _fill_tagdict(self, tag_marker):
+        tagdict = {}
+        attrs = dir(self)
+        for attr in attrs:
+            if attr.startswith(tag_marker):
+                tmp = attr.split('_')[1:]
+                tag_name = ' '.join(tmp)
+                tagdict[tag_name] = getattr(self, attr)
+        return tagdict
     
     # Inherited from html.parser.HTMLParser ####################################
     def handle_starttag(self, tag, attrs):
@@ -83,29 +93,6 @@ class ProjectFileReader(MarkupReaderBase):
         self.endtime = None
         self.inworking = False
         self.inpause = False
-        
-        self.starttags = {
-            'projectfile': self.projectfile_start,
-            'project': self.project_start,
-            'subprojects': self.subprojects_start,
-            'subproject': self.subproject_start,
-            'working_days': self.working_days_start,
-            'wday': self.wday_start,
-            'working': self.working_start,
-            'pause': self.pause_start,
-            'starttime': self.starttime_start,
-            'endtime': self.endtime_start,
-        }
-        self.endtags = {
-            'projectfile': self.projectfile_end,
-            'project': self.project_end,
-            'subprojects': self.subprojects_end,
-            'subproject': self.subproject_end,
-            'working_days': self.working_days_end,
-            'wday': self.wday_end,
-            'working': self.working_end,
-            'pause': self.pause_end,
-        }
         
     # Properties ###############################################################
     @property
@@ -171,7 +158,7 @@ class ProjectFileReader(MarkupReaderBase):
     ############################################################################
         
     # Handler for the tags #####################################################
-    def projectfile_start(self, attrs):
+    def starttag_projectfile(self, attrs):
         if not attrs:
             raise ProjectFileError('No file version found.')
 
@@ -183,44 +170,44 @@ class ProjectFileReader(MarkupReaderBase):
                 'Wrong file version. The found version is {}.'.format(version)
             )
     
-    def projectfile_end(self):
+    def endtag_projectfile(self):
         pass
     
-    def project_start(self, attrs):
+    def starttag_project(self, attrs):
         self.read_project(attrs, timelib.Project)
     
-    def project_end(self):
+    def endtag_project(self):
         pass
     
-    def subprojects_start(self, attrs):
+    def starttag_subprojects(self, attrs):
         self._project_stack.append(self.project)
         self.project = None
     
-    def subprojects_end(self):
+    def endtag_subprojects(self):
         self.project = self._project_stack.pop()
     
-    def subproject_start(self, attrs):
+    def starttag_subproject(self, attrs):
         self.read_project(attrs, timelib.SubProject)
     
-    def subproject_end(self):
+    def endtag_subproject(self):
         pass
     
-    def working_days_start(self, attrs):
+    def starttag_working_days(self, attrs):
         pass
     
-    def working_days_end(self):
+    def endtag_working_days(self):
         pass
     
-    def wday_start(self, attrs):
+    def starttag_wday(self, attrs):
         self.project.working_days.append(timelib.WorkingDay(self.project))
     
-    def wday_end(self):
+    def endtag_wday(self):
         pass
     
-    def working_start(self, attrs):
+    def starttag_working(self, attrs):
         self.inworking = True
     
-    def working_end(self):
+    def endtag_working(self):
         self.project.current_day.periods.append(
             timelib.Working(
                 self.project.current_day, self.starttime, self.endtime
@@ -228,10 +215,10 @@ class ProjectFileReader(MarkupReaderBase):
         )
         self.inworking = False
     
-    def pause_start(self, attrs):
+    def starttag_pause(self, attrs):
         self.inpause = True
     
-    def pause_end(self):
+    def endtag_pause(self):
         self.project.current_day.periods.append(
             timelib.Pause(
                 self.project.current_day, self.starttime, self.endtime
@@ -239,10 +226,10 @@ class ProjectFileReader(MarkupReaderBase):
         )
         self.inpause = False
     
-    def starttime_start(self, attrs):
+    def starttag_starttime(self, attrs):
         self.starttime = self.read_time(attrs)
     
-    def endtime_start(self, attrs):
+    def starttag_endtime(self, attrs):
         self.endtime = self.read_time(attrs)
     ############################################################################
 
