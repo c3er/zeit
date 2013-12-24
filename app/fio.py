@@ -10,13 +10,15 @@ import html.entities
 import timelib
 import res
 
-# Version of the table file.
+# Use this to mark incompatibilities.
 CURRENT_FILE_VERSION = '0.1'
 
 class ProjectFileError(Exception):
     pass
 
 class MarkupReaderBase(html.parser.HTMLParser):
+    '''XXX Must be documented!
+    '''
     def __init__(self):
         super().__init__()
         self.tmpdat = ''
@@ -42,6 +44,7 @@ class MarkupReaderBase(html.parser.HTMLParser):
     ############################################################################
     
     def _fill_tagdict(self, tag_marker):
+        # XXX Documentation
         tagdict = {}
         attrs = dir(self)
         for attr in attrs:

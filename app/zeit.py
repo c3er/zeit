@@ -124,59 +124,60 @@ def attach_day_to_subproject():
 
 # Appearence ###################################################################
 def create_main_menu(root):
-    global menu_file_new
-    global menu_file_close
-    global menu_subproject_continue
-    global menu_subproject_close
-    global menu_day_stop
-    global menu_day_assign_subproject
+    def create_file_menu(menu):
+        global menu_file_new
+        global menu_file_close
+        file_menu = menu.add_submenu(res.menu.FILE)
+        menu_file_new = file_menu.add_item(
+            res.menu.NEW_PROJECT, new_project, accelerator = 'Strg+N'
+        )
+        file_menu.add_item(
+            res.menu.OPEN_PROJECT, open_project, accelerator = 'Strg+O'
+        )
+        file_menu.add_item(
+            res.menu.SAVE_PROJECT, save_project, accelerator = 'Strg+S'
+        )
+        file_menu.add_item(
+            res.menu.SAVE_PROJECT_AS,
+            save_project_as,
+            accelerator = 'Strg+Umschalt+S'
+        )
+        menu_file_close = file_menu.add_item(
+            res.menu.CLOSE_PROJECT, close_project, accelerator = 'Strg+W'
+        )
+        file_menu.add_seperator()
+        file_menu.add_item(res.STOP, root.destroy, accelerator = 'Alt+F4')
+    
+    def create_subproject_menu(menu):
+        global menu_subproject_continue
+        global menu_subproject_close
+        subproject_menu = menu.add_submenu(res.menu.SUBPROJECT)
+        subproject_menu.add_item(res.menu.NEW_SUBPROJECT, new_subproject)
+        menu_subproject_continue = subproject_menu.add_item(
+            res.menu.CONTINUE_SUBPROJECT,
+            continue_subproject
+        )
+        menu_subproject_close = subproject_menu.add_item(
+            res.menu.CLOSE_SUBPROJECT,
+            close_subproject
+        )
+        
+    def create_day_menu(menu):
+        global menu_day_stop
+        global menu_day_assign_subproject
+        day_menu = menu.add_submenu(res.DAY)
+        day_menu.add_item(res.menu.START_PAUSE_DAY, start_pause_day)
+        menu_day_stop = day_menu.add_item(res.STOP, stop_day)
+        day_menu.add_seperator()
+        menu_day_assign_subproject = day_menu.add_item(
+            res.menu.ATTACH_DAY_TO_SUBPROJECT,
+            attach_day_to_subproject
+        )
     
     menu = gui.Menu(root)
-    
-    # File menu
-    file_menu = menu.add_submenu(res.menu.FILE)
-    menu_file_new = file_menu.add_item(
-        res.menu.NEW_PROJECT, new_project, accelerator = 'Strg+N'
-    )
-    file_menu.add_item(
-        res.menu.OPEN_PROJECT, open_project, accelerator = 'Strg+O'
-    )
-    file_menu.add_item(
-        res.menu.SAVE_PROJECT, save_project, accelerator = 'Strg+S'
-    )
-    file_menu.add_item(
-        res.menu.SAVE_PROJECT_AS,
-        save_project_as,
-        accelerator = 'Strg+Umschalt+S'
-    )
-    menu_file_close = file_menu.add_item(
-        res.menu.CLOSE_PROJECT, close_project, accelerator = 'Strg+W'
-    )
-    file_menu.add_seperator()
-    file_menu.add_item(res.STOP, root.destroy, accelerator = 'Alt+F4')
-    
-    # Subproject menu
-    subproject_menu = menu.add_submenu(res.menu.SUBPROJECT)
-    subproject_menu.add_item(res.menu.NEW_SUBPROJECT, new_subproject)
-    menu_subproject_continue = subproject_menu.add_item(
-        res.menu.CONTINUE_SUBPROJECT,
-        continue_subproject
-    )
-    menu_subproject_close = subproject_menu.add_item(
-        res.menu.CLOSE_SUBPROJECT,
-        close_subproject
-    )
-    
-    # Day menu
-    day_menu = menu.add_submenu(res.DAY)
-    day_menu.add_item(res.menu.START_PAUSE_DAY, start_pause_day)
-    menu_day_stop = day_menu.add_item(res.STOP, stop_day)
-    day_menu.add_seperator()
-    menu_day_assign_subproject = day_menu.add_item(
-        res.menu.ATTACH_DAY_TO_SUBPROJECT,
-        attach_day_to_subproject
-    )
-    
+    create_file_menu(menu)
+    create_subproject_menu(menu)
+    create_day_menu(menu)
     return menu
 
 def toolbar(parent):
