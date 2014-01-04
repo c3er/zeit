@@ -26,11 +26,13 @@ class MarkupReaderBase(html.parser.HTMLParser):
         self.starttags = self._fill_tagdict('starttag')
         self.endtags = self._fill_tagdict('endtag')
 
+    # Needed to use it with a "with" statement #################################
     def __enter__(self):
         return self.__class__()
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
+    ############################################################################
         
     # Properties ###############################################################
     @property
@@ -44,14 +46,31 @@ class MarkupReaderBase(html.parser.HTMLParser):
     ############################################################################
     
     def _fill_tagdict(self, tag_marker):
-        # XXX Documentation
+        '''Helper method to fill the dictionaries for handling the tags.
+        
+        The dictionary that is returned will have the following form:
+        {<tag-name1>: handler1,
+         <tag-name2>: handler2,
+         ...
+         <tag-nameN>: handlerN}
+        
+        A handler must be named with the following schema:
+        <value of tag_marker>_<name of tag>
+        Every method which is named after this schema will be added to the
+        dictionary as mentioned above.
+        '''
         tagdict = {}
         attrs = dir(self)
+        
         for attr in attrs:
             if attr.startswith(tag_marker):
+                
+                # It shall be possible to use underlines in tag names.
                 tmp = attr.split('_')[1:]
-                tag_name = ' '.join(tmp)
+                tag_name = '_'.join(tmp)
+                
                 tagdict[tag_name] = getattr(self, attr)
+                
         return tagdict
     
     # Inherited from html.parser.HTMLParser ####################################

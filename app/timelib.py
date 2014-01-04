@@ -4,6 +4,7 @@
 'Data structures to manage project oriented time recording.'
 
 import datetime
+import collections
 import tkinter
 import tkinter.ttk as ttk
 
@@ -110,6 +111,11 @@ class TimeStamp:
     @property
     def seconds(self):
         return self._get_time(self._seconds)
+    
+    @property
+    def name(self):
+        'Needs to be implemented by inheriting classes.'
+        raise NotImplementedError()
     ############################################################################
 
     def start(self):
@@ -136,10 +142,14 @@ class Period(TimeStamp):
         )
     
 class Working(Period):
-    pass
+    @property
+    def name(self):
+        return res.PERIOD_NAME_WORKING
 
 class Pause(Period):
-    pass
+    @property
+    def name(self):
+        return res.PERIOD_NAME_PAUSE
     
 class WorkingDay(Period):
     def __init__(self, project, *args, **kw):
@@ -147,6 +157,7 @@ class WorkingDay(Period):
         self.periods = []
         self.paused = False
         self.project = project
+        self._date_str = None
         
     def _get_current_period(self, cls):
         for p in reversed(self.periods):
@@ -154,6 +165,12 @@ class WorkingDay(Period):
                 return p
         raise PeriodError('No "' + cls.__name__ + '" period found in this day.')
     
+    def _get_working_periods(self):
+        working_periods = []
+        for p in self.periods:
+            if isinstance(p, Working):
+                working_periods.append(p)
+        return working_periods
     # Properties ###############################################################
     @property
     def length(self):
@@ -177,6 +194,27 @@ class WorkingDay(Period):
             return self.current_pause
         else:
             return self.current_working
+        
+    @property
+    def date_str(self):
+        if self._date_str is None:
+            working_periods = self._get_working_periods()
+            
+            if not working_periods:
+                raise PeriodError()
+            
+            first_working = working_periods[0]
+            if not first_working.started:
+                starttime = datetime.datetime.today()
+            else:
+                starttime = first_working.starttime
+            
+            self._date_str = str(starttime.date())
+        return self._date_str
+        
+    @property
+    def name(self):
+        return ' '.join((res.DAY, self.date_str))
     ############################################################################
     
     def start(self):
@@ -201,8 +239,12 @@ class WorkingDay(Period):
         super().stop()
 
 class Project(TimeStamp):
+    '''Note: The implementation needs to be instanciated from a file to work
+    properly.
+    '''
     def __init__(self, name, *args, **kw):
         super().__init__(*args, **kw)
+        self._name = None
         self.name = name
         self.subprojects = []
         self.working_days = []
@@ -240,6 +282,14 @@ class Project(TimeStamp):
     @property
     def paused(self):
         return self.current_day.paused
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, val):
+        self._name = val
     ############################################################################
     
     def start(self, subproject = None):
@@ -345,21 +395,45 @@ class TimeWidget:
         self.frame = ttk.Frame(self.parent)
         self._build_frame()
         
+class ProjectWidgetItem(collections.UserList):
+    def __init__(self, item, *args):
+        super().__init__()
+        self.item = item
+        if args is not None:
+            self.data = self._build_data(args)
+        else:
+            raise PeriodError('No data found in the arguments.')
+    
+    @staticmethod
+    def _build_data(data):
+        result = []
+        for item in data:
+            result.append(str(item))
+        return result
+        
 class ProjectWidget:
     def __init__(self, parent, project):
         self.event_mapping = {
             '<<TreeviewOpen>>': self.update_tree,
-            '<Double-Button-1>': self.change_project,
             "<MouseWheel>": self.wheelscroll,
         }
         self.project = project
         self.frame = ttk.Frame(parent)
         self.treeview = self._build_treeview(self.frame, project)
-        self._connect_project(self.treeview, project)
+        self.period_mapping = self._connect_project(self.treeview, project)
         
     # Helper functions #########################################################
-    def _connect_project(self, tree, project):
-        pass
+    @staticmethod
+    def _connect_project(treeview, project):
+        if type(project) != Project:
+            raise TypeError('Parameter "project" must be of type "Project".')
+        
+        period_mapping = {}
+        item = ProjectWidgetItem(project, project.name, project.starttime, 'you', 'all')
+        node = treeview.insert('', 'end', values = tuple(item))
+        period_mapping[node] = item
+        # ...
+        return period_mapping
         
     def _build_treeview(self, parent, project):
         def setup_columns(tree, columns):
@@ -412,8 +486,8 @@ class ProjectWidget:
 
     def update_tree(self, event):
         pass
-    
-    def change_project(self, event):
-        pass
     ############################################################################
+    
+    def update(self):
+        pass
 ################################################################################

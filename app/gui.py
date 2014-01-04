@@ -80,7 +80,7 @@ def enable(widget):
     elif isinstance(widget, _CanDisabled):
         widget.enable()
     else:
-        raise TypeError()
+        raise TypeError(str(type(widget)))
 
 def create_button(frame, label, command, *args, **kw):
     button = ttk.Button(frame, *args, text = label, command = command, **kw)
