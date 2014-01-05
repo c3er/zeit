@@ -116,6 +116,11 @@ class TimeStamp:
     def name(self):
         'Needs to be implemented by inheriting classes.'
         raise NotImplementedError()
+    
+    @property
+    def children(self):
+        'Needs to be implemented by inheriting classes.'
+        raise NotImplementedError()
     ############################################################################
 
     def start(self):
@@ -140,13 +145,19 @@ class Period(TimeStamp):
             self.minutes,
             self.seconds
         )
+        
+class AtomicPeriod(Period):
+    'A Period that cannot have child Periods.'
+    @property
+    def children(self):
+        return None
     
-class Working(Period):
+class Working(AtomicPeriod):
     @property
     def name(self):
         return res.PERIOD_NAME_WORKING
 
-class Pause(Period):
+class Pause(AtomicPeriod):
     @property
     def name(self):
         return res.PERIOD_NAME_PAUSE
@@ -215,6 +226,10 @@ class WorkingDay(Period):
     @property
     def name(self):
         return ' '.join((res.DAY, self.date_str))
+    
+    @property
+    def children(self):
+        return self.periods
     ############################################################################
     
     def start(self):
@@ -290,6 +305,10 @@ class Project(TimeStamp):
     @name.setter
     def name(self, val):
         self._name = val
+    
+    @property
+    def children(self):
+        return self.subprojects + self.working_days
     ############################################################################
     
     def start(self, subproject = None):
@@ -413,13 +432,13 @@ class ProjectWidgetItem(collections.UserList):
         
 class ProjectWidget:
     def __init__(self, parent, project):
-        self.event_mapping = {
+        event_mapping = {
             '<<TreeviewOpen>>': self.update_tree,
             "<MouseWheel>": self.wheelscroll,
         }
         self.project = project
         self.frame = ttk.Frame(parent)
-        self.treeview = self._build_treeview(self.frame, project)
+        self.treeview = self._build_treeview(self.frame, project, event_mapping)
         self.period_mapping = self._connect_project(self.treeview, project)
         
     # Helper functions #########################################################
@@ -435,7 +454,8 @@ class ProjectWidget:
         # ...
         return period_mapping
         
-    def _build_treeview(self, parent, project):
+    @staticmethod
+    def _build_treeview(parent, project, event_mapping):
         def setup_columns(tree, columns):
             for col in columns:
                 tree.heading(col, text = col, anchor = 'w')
@@ -469,7 +489,7 @@ class ProjectWidget:
         setup_columns(tree, columns)
         setup_scrollbars(parent, tree)
         
-        gui.bind_events(tree, self.event_mapping)
+        gui.bind_events(tree, event_mapping)
     
         return tree
     ############################################################################

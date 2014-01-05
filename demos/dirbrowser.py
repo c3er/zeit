@@ -55,7 +55,6 @@ def populate_tree(tree, node):
             size = os.stat(p).st_size
             tree.set(id, "size", "%d bytes" % size)
 
-
 def populate_roots(tree):
     dir = os.path.abspath('.').replace('\\', '/')
     node = tree.insert('', 'end', text = dir, values = [dir, "directory"])

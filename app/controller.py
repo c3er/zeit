@@ -15,6 +15,7 @@ class UnknownPathException(Exception):
     pass
 
 class Controller:
+    # XXX This class knows too much about the actual GUI. This shall be reworked!
     def __init__(self, root, state_handler):
         '''Constructor of the "Controller" class.
         
