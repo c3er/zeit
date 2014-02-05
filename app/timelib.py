@@ -17,7 +17,8 @@ UPDATE_TIME = 100
 class PeriodError(Exception):
     pass
 
-class TimeStamp:
+# Base classes. Shall not be instancieted directly. ############################
+class _TimeStamp:
     def __init__(self, starttime = None, endtime = None):
         if starttime is None:
             self.starttime = datetime.timedelta()
@@ -118,6 +119,11 @@ class TimeStamp:
         raise NotImplementedError()
     
     @property
+    def parent(self):
+        'Needs to be implemented by inheriting classes.'
+        raise NotImplementedError()
+    
+    @property
     def children(self):
         'Needs to be implemented by inheriting classes.'
         raise NotImplementedError()
@@ -134,7 +140,7 @@ class TimeStamp:
             self.endtime = datetime.datetime.today()
             self.stopped = True
 
-class Period(TimeStamp):
+class _Period(_TimeStamp):
     def __init__(self, working_day = None, *args, **kw):
         super().__init__(*args, **kw)
         self.working_day = working_day
@@ -145,24 +151,29 @@ class Period(TimeStamp):
             self.minutes,
             self.seconds
         )
+    
+    @property
+    def parent(self):
+        return self.working_day
         
-class AtomicPeriod(Period):
+class _AtomicPeriod(_Period):
     'A Period that cannot have child Periods.'
     @property
     def children(self):
         return None
+################################################################################
     
-class Working(AtomicPeriod):
+class Working(_AtomicPeriod):
     @property
     def name(self):
         return res.PERIOD_NAME_WORKING
 
-class Pause(AtomicPeriod):
+class Pause(_AtomicPeriod):
     @property
     def name(self):
         return res.PERIOD_NAME_PAUSE
     
-class WorkingDay(Period):
+class WorkingDay(_Period):
     def __init__(self, project, *args, **kw):
         super().__init__(*args, **kw)
         self.periods = []
@@ -182,6 +193,7 @@ class WorkingDay(Period):
             if isinstance(p, Working):
                 working_periods.append(p)
         return working_periods
+    
     # Properties ###############################################################
     @property
     def length(self):
@@ -208,24 +220,30 @@ class WorkingDay(Period):
         
     @property
     def date_str(self):
+        def find_starttime(working_periods):
+            first_working = working_periods[0]
+            if not first_working.started:
+                return datetime.datetime.today()
+            else:
+                return first_working.starttime
+        
         if self._date_str is None:
             working_periods = self._get_working_periods()
-            
             if not working_periods:
                 raise PeriodError()
             
-            first_working = working_periods[0]
-            if not first_working.started:
-                starttime = datetime.datetime.today()
-            else:
-                starttime = first_working.starttime
-            
+            starttime = find_starttime(working_periods)
             self._date_str = str(starttime.date())
+
         return self._date_str
         
     @property
     def name(self):
         return ' '.join((res.DAY, self.date_str))
+    
+    @property
+    def parent(self):
+        return self.project
     
     @property
     def children(self):
@@ -253,7 +271,7 @@ class WorkingDay(Period):
         self.current_period.stop()
         super().stop()
 
-class Project(TimeStamp):
+class Project(_TimeStamp):
     '''Note: The implementation needs to be instanciated from a file to work
     properly.
     '''
@@ -307,6 +325,10 @@ class Project(TimeStamp):
         self._name = val
     
     @property
+    def parent(self):
+        return None
+    
+    @property
     def children(self):
         return self.subprojects + self.working_days
     ############################################################################
@@ -333,6 +355,10 @@ class SubProject(Project):
     def __init__(self, name, project, *args, **kw):
         super().__init__(name, *args, **kw)
         self.parent_project = project
+    
+    @property
+    def parent(self):
+        return self.parent_project
 
 # GUI related ##################################################################
 class DisplayContainer:
@@ -415,9 +441,13 @@ class TimeWidget:
         self._build_frame()
         
 class ProjectWidgetItem(collections.UserList):
-    def __init__(self, item, *args):
+    def __init__(self, item, item_name, *args):
         super().__init__()
+        
+        self.__data = None
         self.item = item
+        self.item_name = item_name
+        
         if args is not None:
             self.data = self._build_data(args)
         else:
@@ -427,8 +457,35 @@ class ProjectWidgetItem(collections.UserList):
     def _build_data(data):
         result = []
         for item in data:
-            result.append(str(item))
+            if isinstance(item, str):
+                result.append(item)
+            else:
+                raise TypeError(
+                    'Arguments must be strings, containing valid Python code.'
+                )
         return result
+    
+    # Properties ###############################################################
+    @property
+    def parent(self):
+        return self.item.parent
+    
+    @property
+    def children(self):
+        return self.item.children
+    
+    @property
+    def data(self):
+        namespace = {self.item_name: self.item}
+        return [str(eval(item, namespace)) for item in self.__data]
+    
+    @data.setter
+    def data(self, val):
+        if isinstance(val, (list, collections.UserList)):
+            self.__data = val
+        else:
+            raise TypeError()
+    ############################################################################
         
 class ProjectWidget:
     def __init__(self, parent, project):
@@ -444,13 +501,27 @@ class ProjectWidget:
     # Helper functions #########################################################
     @staticmethod
     def _connect_project(treeview, project):
+        def insert_children(treeview, period_mapping, parent):
+            # XXX
+            for child in parent.children:
+                pass
+        
         if type(project) != Project:
             raise TypeError('Parameter "project" must be of type "Project".')
         
-        period_mapping = {}
-        item = ProjectWidgetItem(project, project.name, project.starttime, 'you', 'all')
+        period_mapping = collections.OrderedDict()
+        item = ProjectWidgetItem(
+            project,
+            'project',
+            'project.name',
+            'project.starttime',
+            'project.endtime',
+            'project.endtime - project.starttime'
+        )
         node = treeview.insert('', 'end', values = tuple(item))
         period_mapping[node] = item
+        
+        insert_children(treeview, period_mapping, project)
         # ...
         return period_mapping
         

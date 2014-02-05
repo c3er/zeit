@@ -7,7 +7,7 @@ import tkinter.ttk as ttk
 DEBUG = True
 
 def error(msg, exc = None):
-    excmsg = '\n' + str(exc) if exc is not None else ''
+    excmsg = ('\n' + str(exc)) if exc is not None else ''
     tkinter.messagebox.showerror(res.STD_ERROR_TITLE, msg + excmsg)
 
 # This stuff was originally from some demos ####################################
