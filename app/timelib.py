@@ -441,18 +441,21 @@ class TimeWidget:
         self._build_frame()
         
 class ProjectWidgetItem(collections.UserList):
-    def __init__(self, item, item_name, *args):
+    # XXX Documentation
+    def __init__(self, item, item_name, values):
+        # XXX dito
         super().__init__()
         
-        self.__data = None
+        self.children = []
+        self.parent = self._link2parent(item)
+        
         self.item = item
         self.item_name = item_name
         
-        if args is not None:
-            self.data = self._build_data(args)
-        else:
-            raise PeriodError('No data found in the arguments.')
+        self.__data = None
+        self.data = self._build_data(values)
     
+    # Helper functions #########################################################
     @staticmethod
     def _build_data(data):
         result = []
@@ -461,19 +464,27 @@ class ProjectWidgetItem(collections.UserList):
                 result.append(item)
             else:
                 raise TypeError(
-                    'Arguments must be strings, containing valid Python code.'
+                    'Values must be strings, containing valid Python code.'
                 )
         return result
     
+    def _link2parent(self, item):
+        setattr(item, 'widget_ref', self)
+        itemparent = item.parent
+        
+        if itemparent is None:
+            return None
+        elif not hasattr(itemparent, 'widget_ref'):
+            raise AttributeError(
+                'Parent of item is not assigned to a "ProjectWidgetItem" yet.'
+            )
+        else:
+            parent = itemparent.widget_ref
+            parent.children.append(self)
+            return parent
+    ############################################################################
+    
     # Properties ###############################################################
-    @property
-    def parent(self):
-        return self.item.parent
-    
-    @property
-    def children(self):
-        return self.item.children
-    
     @property
     def data(self):
         namespace = {self.item_name: self.item}
@@ -484,7 +495,7 @@ class ProjectWidgetItem(collections.UserList):
         if isinstance(val, (list, collections.UserList)):
             self.__data = val
         else:
-            raise TypeError()
+            raise TypeError('Value can only be a list object.')
     ############################################################################
         
 class ProjectWidget:
@@ -510,14 +521,15 @@ class ProjectWidget:
             raise TypeError('Parameter "project" must be of type "Project".')
         
         period_mapping = collections.OrderedDict()
-        item = ProjectWidgetItem(
-            project,
-            'project',
+        
+        projectvalues = (
             'project.name',
             'project.starttime',
             'project.endtime',
             'project.endtime - project.starttime'
         )
+        item = ProjectWidgetItem(project, 'project', projectvalues)
+        
         node = treeview.insert('', 'end', values = tuple(item))
         period_mapping[node] = item
         
