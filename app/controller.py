@@ -16,6 +16,8 @@ class UnknownPathException(Exception):
 
 class Controller:
     # XXX This class knows too much about the actual GUI. This shall be reworked!
+    # GUI consists of UI controls (buttons, etc.) and a data part. This
+    # "data part" could be a class of its own...
     def __init__(self, root, state_handler):
         '''Constructor of the "Controller" class.
         

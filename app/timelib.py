@@ -441,9 +441,23 @@ class TimeWidget:
         self._build_frame()
         
 class ProjectWidgetItem(collections.UserList):
-    # XXX Documentation
+    '''An item for the "ProjectWidget". Basically this object consists of a list
+    of the values, which shall be shown. This implementation is able to get
+    access to the current values of the actual item, not just the values of
+    creation time of an instance of this class.
+    '''
     def __init__(self, item, item_name, values):
-        # XXX dito
+        '''Parameters:
+            - item: An item, which must be a subclass of "_TimeStemp".
+            - item_name: Name of the item. Must be identical to the name, which
+              is used in the "values".
+            - values: Not actual values but strings, which must contain valid
+              python code. When the data is accessed, these "values" will be
+              evaluated. This is done this way, to get always the current values
+              of the item instead of the values of creation time of this object.
+              Note: The count of the values list must be identical to the column
+              count of the ProjectWidget, to which this object belongs to.
+        '''
         super().__init__()
         
         self.children = []
@@ -488,7 +502,7 @@ class ProjectWidgetItem(collections.UserList):
     @property
     def data(self):
         namespace = {self.item_name: self.item}
-        return [str(eval(item, namespace)) for item in self.__data]
+        return [str(eval(value, namespace)) for value in self.__data]
     
     @data.setter
     def data(self, val):

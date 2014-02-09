@@ -6,6 +6,7 @@
 import tkinter
 import tkinter.ttk as ttk
 
+# Menu related #################################################################
 class _CanDisabled:
     'Helper class to make it possible to disable/enable menu items.'
     
@@ -15,7 +16,6 @@ class _CanDisabled:
     def enable(self):
         self.parent.tkmenu.entryconfigure(self.label, state = 'normal')
 
-# Menu related #################################################################
 class Menu:
     '''Wrapper class over the tkinter.Menu class to add needed features
     These features are:
@@ -89,7 +89,7 @@ def create_button(frame, label, command, *args, **kw):
 
 def bind_events(widget, event_mapping):
     '''Parameters:
-        - widget: The widget to bind events to.
+        - widget: The TK widget to bind events to.
         - event_mapping: A dictionary where every key/value pair has the
           following form:
           - key: A string, containing the event in TK notation.
