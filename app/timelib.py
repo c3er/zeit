@@ -160,7 +160,7 @@ class _AtomicPeriod(_Period):
     'A Period that cannot have child Periods.'
     @property
     def children(self):
-        return None
+        return []
 ################################################################################
     
 class Working(_AtomicPeriod):
@@ -220,19 +220,12 @@ class WorkingDay(_Period):
         
     @property
     def date_str(self):
-        def find_starttime(working_periods):
-            first_working = working_periods[0]
-            if not first_working.started:
-                return datetime.datetime.today()
-            else:
-                return first_working.starttime
-        
         if self._date_str is None:
             working_periods = self._get_working_periods()
             if not working_periods:
                 raise PeriodError()
             
-            starttime = find_starttime(working_periods)
+            starttime = working_periods[0].starttime
             self._date_str = str(starttime.date())
 
         return self._date_str
@@ -526,33 +519,48 @@ class ProjectWidget:
     # Helper functions #########################################################
     @staticmethod
     def _connect_project(treeview, project):
-        def insert_children(treeview, period_mapping, parent):
-            # XXX
+        
+        def insert_children(treeview, period_mapping, parent, values):
+            parent_node = list(period_mapping.keys())[-1]
             for child in parent.children:
-                pass
+                child_item = ProjectWidgetItem(child, 'stamp', values)
+                child_node = treeview.insert(
+                    parent_node,
+                    'end',
+                    text = child.name,
+                    values = tuple(child_item),
+                    open = True
+                )
+                period_mapping[child_node] = child_item
+                insert_children(treeview, period_mapping, child, values)
         
         if type(project) != Project:
             raise TypeError('Parameter "project" must be of type "Project".')
         
         period_mapping = collections.OrderedDict()
         
-        projectvalues = (
-            'project.name',
-            'project.starttime',
-            'project.endtime',
-            'project.endtime - project.starttime'
+        timestamp_values = (
+            'stamp.starttime',
+            'stamp.endtime',
+            'stamp.endtime - stamp.starttime'
         )
-        item = ProjectWidgetItem(project, 'project', projectvalues)
+        root_item = ProjectWidgetItem(project, 'stamp', timestamp_values)
+        root_node = treeview.insert(
+            '',
+            'end',
+            text = project.name,
+            values = tuple(root_item),
+            open = True
+        )
+        period_mapping[root_node] = root_item
         
-        node = treeview.insert('', 'end', values = tuple(item))
-        period_mapping[node] = item
-        
-        insert_children(treeview, period_mapping, project)
+        insert_children(treeview, period_mapping, project, timestamp_values)
         # ...
         return period_mapping
         
     @staticmethod
     def _build_treeview(parent, project, event_mapping):
+        
         def setup_columns(tree, columns):
             for col in columns:
                 tree.heading(col, text = col, anchor = 'w')
@@ -576,12 +584,12 @@ class ProjectWidget:
             parent.grid_rowconfigure(0, weight = 1)
             
         columns = (
-            res.PROJECT_COLUMN_NAME,
             res.PROJECT_COLUMN_FROM,
             res.PROJECT_COLUMN_UNTIL,
             res.PROJECT_COLUMN_DURATION
         )
-        tree = ttk.Treeview(columns = columns, show = "headings")
+        tree = ttk.Treeview(columns = columns)
+        tree.heading('#0', text = res.PROJECT_COLUMN_NAME, anchor = 'w')
         
         setup_columns(tree, columns)
         setup_scrollbars(parent, tree)

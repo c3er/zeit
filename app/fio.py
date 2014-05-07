@@ -48,7 +48,7 @@ class MarkupReaderBase(html.parser.HTMLParser):
     def _fill_tagdict(self, tag_marker):
         '''Helper method to fill the dictionaries for handling the tags.
         
-        The dictionary that is returned will have the following form:
+        The dictionary that is returned has the following form:
         {<tag-name1>: handler1,
          <tag-name2>: handler2,
          ...
@@ -64,7 +64,6 @@ class MarkupReaderBase(html.parser.HTMLParser):
         
         for attr in attrs:
             if attr.startswith(tag_marker):
-                
                 # It shall be possible to use underlines in tag names.
                 tmp = attr.split('_')[1:]
                 tag_name = '_'.join(tmp)
