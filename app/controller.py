@@ -11,13 +11,13 @@ import fio
 import res
 from misc import *
 
+UPDATE_TIME = 100  # milliseconds
+
 class UnknownPathException(Exception):
     pass
 
 class Controller:
-    # XXX This class knows too much about the actual GUI. This shall be reworked!
-    # GUI consists of UI controls (buttons, etc.) and a data part. This
-    # "data part" could be a class of its own...
+    # XXX This class knows too much about the actual GUI.
     def __init__(self, root, state_handler):
         '''Constructor of the "Controller" class.
         
@@ -34,6 +34,7 @@ class Controller:
         self.frame = None
         self.time_widget = None
         self.project_widget = None
+        self.cyclic_handlers = []
         self.isnew = True
         self.new_project()
         
@@ -91,6 +92,13 @@ class Controller:
             self.isnew = False
             self.update()
             
+    def _register_cyclic_handler(self, widget):
+        if not isinstance(widget, timelib.CyclicUpdatable):
+            raise TypeError(
+                '"widget" must be an instance of "timelib.CyclicUpdatable".'
+            )
+        self.cyclic_handlers.append(widget)
+            
     def _build_frame(self, parent, project):
         if self.frame:
             self.frame.destroy()
@@ -102,16 +110,26 @@ class Controller:
             fill = 'both',
             expand = True
         )
+        self._register_cyclic_handler(self.project_widget)
         
         self.time_widget = timelib.TimeWidget(self.frame, project)
         self.time_widget.frame.pack(side = 'left', anchor = 'n')
+        self._register_cyclic_handler(self.time_widget)
         
         self.frame.pack(fill = 'both', expand = True)
+        self.frame.after(UPDATE_TIME, self.cyclic_update)
     ############################################################################
     
+    # Handlers for events, which are not caused dirctly by the user ############
     def update(self):
         self.state_handler(self)
         #...
+        
+    def cyclic_update(self):
+        for c in self.cyclic_handlers:
+            c.cyclic_update()
+        self.frame.after(UPDATE_TIME, self.cyclic_update)
+    ############################################################################
         
     # Interface functions for the GUI handler ##################################
     def new_project(self):

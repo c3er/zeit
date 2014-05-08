@@ -12,23 +12,21 @@ import gui
 import res
 from misc import *
 
-UPDATE_TIME = 100
-
 class PeriodError(Exception):
     pass
 
 # Base classes. Shall not be instancieted directly. ############################
 class _TimeStamp:
-    def __init__(self, starttime = None, endtime = None):
+    def __init__(self, starttime = None, stoptime = None):
         if starttime is None:
             self.starttime = datetime.timedelta()
         else:
             self.starttime = starttime
             
-        if endtime is None:
-            self.endtime = self.starttime
+        if stoptime is None:
+            self.stoptime = self.starttime
         else:
-            self.endtime = endtime
+            self.stoptime = stoptime
             
         self.stopped = True
         
@@ -86,8 +84,8 @@ class _TimeStamp:
     @property
     def current(self):
         if not self.stopped:
-            self.endtime = datetime.datetime.today()
-        return self.endtime
+            self.stoptime = datetime.datetime.today()
+        return self.stoptime
     
     @property
     def length(self):
@@ -132,12 +130,12 @@ class _TimeStamp:
     def start(self):
         if self.stopped:
             self.starttime = datetime.datetime.today()
-            self.endtime = self.starttime
+            self.stoptime = self.starttime
             self.stopped = False
     
     def stop(self):
         if not self.stopped:
-            self.endtime = datetime.datetime.today()
+            self.stoptime = datetime.datetime.today()
             self.stopped = True
 
 class _Period(_TimeStamp):
@@ -354,7 +352,11 @@ class SubProject(Project):
         return self.parent_project
 
 # GUI related ##################################################################
-class DisplayContainer:
+class CyclicUpdatable:
+    def cyclic_update(self):
+        raise NotImplementedError()
+
+class DisplayContainer(CyclicUpdatable):
     def __init__(self, parent, label, period):
         self.frame = None
         self.label = label
@@ -364,12 +366,10 @@ class DisplayContainer:
         
         self.update()
     
-    def _cyclic_update(self):
+    def cyclic_update(self):
         p = str(self.period)
         if p != self.content.get():
             self.content.set(p)
-
-        self.frame.after(UPDATE_TIME, self._cyclic_update)
         
     def update(self):
         if self.frame is not None:
@@ -386,9 +386,8 @@ class DisplayContainer:
         self.content.set(str(self.period))
         
         self.frame.pack(anchor = 'e')
-        self.frame.after(UPDATE_TIME, self._cyclic_update)
 
-class TimeWidget:
+class TimeWidget(CyclicUpdatable):
     def __init__(self, parent, project):
         self.frame = None
         self.parent = parent
@@ -427,6 +426,10 @@ class TimeWidget:
             for d in self.displays:
                 d.update()
         
+    def cyclic_update(self):
+        for d in self.displays:
+            d.cyclic_update()
+        
     def update(self):
         if self.frame is not None:
             self.frame.destroy()
@@ -461,6 +464,9 @@ class ProjectWidgetItem(collections.UserList):
         
         self.__data = None
         self.data = self._build_data(values)
+        
+        self.lastcalled = ()
+        self._tmpdata = []
     
     # Helper functions #########################################################
     @staticmethod
@@ -492,10 +498,26 @@ class ProjectWidgetItem(collections.UserList):
     ############################################################################
     
     # Properties ###############################################################
+    # XXX May break in future implementations of collections.UserList.
     @property
     def data(self):
         namespace = {self.item_name: self.item}
-        return [str(eval(value, namespace)) for value in self.__data]
+        data = []
+        
+        for val in self.__data:
+            result = eval(val, namespace)
+            if hasattr(result, 'microsecond'):
+                us = datetime.timedelta(microseconds = result.microsecond)
+                result -= us
+            elif hasattr(result, 'microseconds'):
+                us = datetime.timedelta(microseconds = result.microseconds)
+                result -= us
+            data.append(str(result))
+            
+        self.lastcalled = tuple(self._tmpdata)
+        self._tmpdata = data
+        
+        return data
     
     @data.setter
     def data(self, val):
@@ -505,7 +527,7 @@ class ProjectWidgetItem(collections.UserList):
             raise TypeError('Value can only be a list object.')
     ############################################################################
         
-class ProjectWidget:
+class ProjectWidget(CyclicUpdatable):
     def __init__(self, parent, project):
         event_mapping = {
             '<<TreeviewOpen>>': self.update_tree,
@@ -519,43 +541,29 @@ class ProjectWidget:
     # Helper functions #########################################################
     @staticmethod
     def _connect_project(treeview, project):
-        
-        def insert_children(treeview, period_mapping, parent, values):
-            parent_node = list(period_mapping.keys())[-1]
-            for child in parent.children:
-                child_item = ProjectWidgetItem(child, 'stamp', values)
-                child_node = treeview.insert(
-                    parent_node,
-                    'end',
-                    text = child.name,
-                    values = tuple(child_item),
-                    open = True
-                )
-                period_mapping[child_node] = child_item
-                insert_children(treeview, period_mapping, child, values)
+                
+        def insert_items(treeview, period_mapping, values, timestamp, parent):
+            item = ProjectWidgetItem(timestamp, 'stamp', values)
+            node = treeview.insert(parent, 'end',
+                text = timestamp.name,
+                values = tuple(item),
+                open = True
+            )
+            period_mapping[node] = item
+            for child in timestamp.children:
+                insert_items(treeview, period_mapping, values, child, node)
         
         if type(project) != Project:
             raise TypeError('Parameter "project" must be of type "Project".')
         
         period_mapping = collections.OrderedDict()
-        
         timestamp_values = (
             'stamp.starttime',
-            'stamp.endtime',
-            'stamp.endtime - stamp.starttime'
+            'stamp.stoptime',
+            'stamp.stoptime - stamp.starttime'
         )
-        root_item = ProjectWidgetItem(project, 'stamp', timestamp_values)
-        root_node = treeview.insert(
-            '',
-            'end',
-            text = project.name,
-            values = tuple(root_item),
-            open = True
-        )
-        period_mapping[root_node] = root_item
-        
-        insert_children(treeview, period_mapping, project, timestamp_values)
-        # ...
+        insert_items(treeview, period_mapping, timestamp_values, project, '')       
+
         return period_mapping
         
     @staticmethod
@@ -610,8 +618,16 @@ class ProjectWidget:
                 tree.yview('scroll', 2, 'units')
 
     def update_tree(self, event):
+        # XXX
         pass
     ############################################################################
+    
+    def cyclic_update(self):
+        for node, item in self.period_mapping.items():
+            lastcalled = item.lastcalled
+            itemdata = tuple(item)
+            if itemdata != lastcalled:
+                self.treeview.item(node, values = itemdata)
     
     def update(self):
         pass

@@ -122,7 +122,7 @@ def attach_day_to_subproject():
     print('attach_day_to_subproject')
 ################################################################################
 
-# Appearence ###################################################################
+# Appearence and initializing ##################################################
 def create_main_menu(root):
     def create_file_menu(menu):
         global menu_file_new

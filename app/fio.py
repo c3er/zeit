@@ -172,6 +172,8 @@ class ProjectFileReader(MarkupReaderBase):
         
         if year == month == day == hours == minutes == seconds == -1:
             time = datetime.datetime.today()
+            microseconds = datetime.timedelta(microseconds = time.microsecond)
+            time -= microseconds
         else:
             time = datetime.datetime(year, month, day, hours, minutes, seconds)
             
