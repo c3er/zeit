@@ -6,7 +6,9 @@
 import sys
 import os
 
-import timelib
+#import timelib
+#import timedata
+import timegui
 import fio
 import res
 from misc import *
@@ -88,14 +90,15 @@ class Controller:
         if condition:
             func()
             self.time_widget[name].period = period
+            self.project_widget.add_item(period)
             self._modified = True
             self.isnew = False
             self.update()
             
     def _register_cyclic_handler(self, widget):
-        if not isinstance(widget, timelib.CyclicUpdatable):
+        if not isinstance(widget, timegui.CyclicUpdatable):
             raise TypeError(
-                '"widget" must be an instance of "timelib.CyclicUpdatable".'
+                '"widget" must be an instance of "timegui.CyclicUpdatable".'
             )
         self.cyclic_handlers.append(widget)
             
@@ -104,7 +107,7 @@ class Controller:
             self.frame.destroy()
         self.frame = ttk.Frame(parent)
         
-        self.project_widget = timelib.ProjectWidget(self.frame, project)
+        self.project_widget = timegui.ProjectWidget(self.frame, project)
         self.project_widget.frame.pack(
             side = 'left',
             fill = 'both',
@@ -112,7 +115,7 @@ class Controller:
         )
         self._register_cyclic_handler(self.project_widget)
         
-        self.time_widget = timelib.TimeWidget(self.frame, project)
+        self.time_widget = timegui.TimeWidget(self.frame, project)
         self.time_widget.frame.pack(side = 'left', anchor = 'n')
         self._register_cyclic_handler(self.time_widget)
         

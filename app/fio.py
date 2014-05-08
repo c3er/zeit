@@ -7,7 +7,8 @@ import datetime
 import html.parser
 import html.entities
 
-import timelib
+#import timedata
+import timedata
 import res
 
 # Use this to mark incompatibilities.
@@ -197,7 +198,7 @@ class ProjectFileReader(MarkupReaderBase):
         pass
     
     def starttag_project(self, attrs):
-        self.read_project(attrs, timelib.Project)
+        self.read_project(attrs, timedata.Project)
     
     def endtag_project(self):
         pass
@@ -210,7 +211,7 @@ class ProjectFileReader(MarkupReaderBase):
         self.project = self._project_stack.pop()
     
     def starttag_subproject(self, attrs):
-        self.read_project(attrs, timelib.SubProject)
+        self.read_project(attrs, timedata.SubProject)
     
     def endtag_subproject(self):
         pass
@@ -222,7 +223,7 @@ class ProjectFileReader(MarkupReaderBase):
         pass
     
     def starttag_wday(self, attrs):
-        self.project.working_days.append(timelib.WorkingDay(self.project))
+        self.project.working_days.append(timedata.WorkingDay(self.project))
     
     def endtag_wday(self):
         pass
@@ -232,7 +233,7 @@ class ProjectFileReader(MarkupReaderBase):
     
     def endtag_working(self):
         self.project.current_day.periods.append(
-            timelib.Working(
+            timedata.Working(
                 self.project.current_day, self.starttime, self.endtime
             )
         )
@@ -243,7 +244,7 @@ class ProjectFileReader(MarkupReaderBase):
     
     def endtag_pause(self):
         self.project.current_day.periods.append(
-            timelib.Pause(
+            timedata.Pause(
                 self.project.current_day, self.starttime, self.endtime
             )
         )
