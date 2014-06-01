@@ -7,7 +7,6 @@ import datetime
 import html.parser
 import html.entities
 
-#import timedata
 import timedata
 import res
 
@@ -133,7 +132,8 @@ class ProjectFileReader(MarkupReaderBase):
     ############################################################################
         
     # Helper functions #########################################################
-    def get_project_infos(self, attrs):
+    @staticmethod
+    def get_project_infos(attrs):
         if not attrs:
             raise ProjectFileError('File is broken.')
         

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+'GUI elements to use for time recording.'
+
 import datetime
 import collections
 import tkinter
@@ -125,6 +127,9 @@ class ProjectWidgetItem(collections.UserList):
         
         self.lastcalled = ()
         self._tmpdata = []
+        
+    def __hash__(self):
+        return id(self)
     
     # Helper functions #########################################################
     @staticmethod
@@ -140,6 +145,7 @@ class ProjectWidgetItem(collections.UserList):
         return result
     
     def _link2parent(self, item):
+        # XXX Very hacky
         setattr(item, 'widget_ref', self)
         itemparent = item.parent
         
@@ -156,7 +162,10 @@ class ProjectWidgetItem(collections.UserList):
     ############################################################################
     
     # Properties ###############################################################
-    # XXX May break in future implementations of collections.UserList.
+    # XXX May break in future implementations of "collections.UserList".
+    # The attribute "data" of "collections.UserList" is overwritten with
+    # properties to accomplish the needed functionality.
+    
     @property
     def data(self):
         namespace = {self.item_name: self.item}
@@ -164,12 +173,14 @@ class ProjectWidgetItem(collections.UserList):
         
         for val in self.__data:
             result = eval(val, namespace)
+            
             if hasattr(result, 'microsecond'):
-                us = datetime.timedelta(microseconds = result.microsecond)
-                result -= us
+                us = result.microsecond
             elif hasattr(result, 'microseconds'):
-                us = datetime.timedelta(microseconds = result.microseconds)
-                result -= us
+                us = result.microseconds
+            
+            us = datetime.timedelta(microseconds = us)
+            result -= us
             data.append(str(result))
             
         self.lastcalled = tuple(self._tmpdata)
@@ -191,36 +202,30 @@ class ProjectWidget(CyclicUpdatable):
             '<<TreeviewOpen>>': self.update_tree,
             "<MouseWheel>": self.wheelscroll,
         }
+        self.timestamp_values = (
+            'stamp.starttime',
+            'stamp.stoptime',
+            'stamp.stoptime - stamp.starttime'
+        )
         self.project = project
         self.frame = ttk.Frame(parent)
         self.treeview = self._build_treeview(self.frame, project, event_mapping)
-        self.period_mapping = self._connect_project(self.treeview, project)
+        self.period_mapping = self._connect_project(project)
         
     # Helper functions for initializing ########################################
-    @staticmethod
-    def _connect_project(treeview, project):
+    def _connect_project(self, project):
                 
-        def insert_items(treeview, period_mapping, values, timestamp, parent):
-            item = ProjectWidgetItem(timestamp, 'stamp', values)
-            node = treeview.insert(parent, 'end',
-                text = timestamp.name,
-                values = tuple(item),
-                open = True
-            )
-            period_mapping[node] = item
+        def insert_items(period_mapping, timestamp, parent):
+            item, node = self._insert_item(timestamp, parent)
+            period_mapping[item] = node
             for child in timestamp.children:
-                insert_items(treeview, period_mapping, values, child, node)
+                insert_items(period_mapping, child, node)
         
         if type(project) != timedata.Project:
             raise TypeError('Parameter "project" must be of type "Project".')
         
         period_mapping = collections.OrderedDict()
-        timestamp_values = (
-            'stamp.starttime',
-            'stamp.stoptime',
-            'stamp.stoptime - stamp.starttime'
-        )
-        insert_items(treeview, period_mapping, timestamp_values, project, '')       
+        insert_items(period_mapping, project, '')
 
         return period_mapping
         
@@ -265,6 +270,15 @@ class ProjectWidget(CyclicUpdatable):
         return tree
     ############################################################################
     
+    def _insert_item(self, timestamp, tkparent):
+        item = ProjectWidgetItem(timestamp, 'stamp', self.timestamp_values)
+        node = self.treeview.insert(tkparent, 'end',
+            text = timestamp.name,
+            values = tuple(item),
+            open = True
+        )
+        return item, node
+    
     # Handlers #################################################################
     @staticmethod
     def wheelscroll(event):
@@ -281,11 +295,24 @@ class ProjectWidget(CyclicUpdatable):
     ############################################################################
     
     def cyclic_update(self):
-        for node, item in self.period_mapping.items():
+        for item, node in self.period_mapping.items():
             lastcalled = item.lastcalled
             itemdata = tuple(item)
             if itemdata != lastcalled:
                 self.treeview.item(node, values = itemdata)
     
     def add_item(self, period):
-        pass
+        parent = period.parent
+        if parent is None:
+            raise ValueError(
+                '"period" must be a subelement of an existing item.'
+            )
+
+        parent_item = parent.widget_ref
+        for child in parent_item.children:
+            if child.item == period:
+                return
+        
+        parent_node = self.period_mapping[parent_item]
+        item, node = self._insert_item(period, parent_node)
+        self.period_mapping[item] = node

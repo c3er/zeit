@@ -6,8 +6,6 @@
 import sys
 import os
 
-#import timelib
-#import timedata
 import timegui
 import fio
 import res
@@ -28,16 +26,22 @@ class Controller:
         - state_handler: A handler function, which updates the GUI,
           depending on the state of the controller.
         '''
+        # GUI related
         self.root = root
-        self.state_handler = state_handler
-        self._modified = False
-        self.path = None
-        self.project = None
         self.frame = None
         self.time_widget = None
         self.project_widget = None
         self.cyclic_handlers = []
+        self.state_handler = state_handler
+        
+        # Data
+        self.path = None
+        self.project = None
+        
+        # Data state
+        self._modified = False
         self.isnew = True
+        
         self.new_project()
         
     # Properties ###############################################################
