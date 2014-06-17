@@ -174,8 +174,8 @@
 <node TEXT="Jedes Projekt wird in eine eigene Datei gespeichert" ID="ID_1931952674" CREATED="1344273009577" MODIFIED="1344273023946"/>
 <node TEXT="Beim Programmstart wird das zuletzt ge&#xf6;ffnete Projekt automatisch wieder ge&#xf6;ffnet" ID="ID_1182355663" CREATED="1344366846239" MODIFIED="1344366887641"/>
 <node TEXT="Wenn das Programm zum ersten mal gestartet wird oder das Projekt beim letzten mal geschlossen wurde, wird ein neues Projekt mit dem vorl&#xe4;ufigen Namen &quot;Unbenannt&quot; erstellt" ID="ID_1073066797" CREATED="1346578069194" MODIFIED="1346578210326">
-<node TEXT="Das geschieht durch Laden einer &quot;Default&quot;-Datei" ID="ID_958692807" CREATED="1349008990735" MODIFIED="1349009057096">
-<arrowlink SHAPE="CUBIC_CURVE" COLOR="#000000" WIDTH="2" TRANSPARENCY="80" FONT_SIZE="9" FONT_FAMILY="SansSerif" DESTINATION="ID_122709268" STARTINCLINATION="996;0;" ENDINCLINATION="996;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
+<node TEXT="Das geschieht durch Laden einer &quot;Default&quot;-Datei" ID="ID_958692807" CREATED="1349008990735" MODIFIED="1401693696025">
+<arrowlink SHAPE="CUBIC_CURVE" COLOR="#000000" WIDTH="2" TRANSPARENCY="80" FONT_SIZE="9" FONT_FAMILY="SansSerif" DESTINATION="ID_122709268" STARTINCLINATION="933;0;" ENDINCLINATION="996;0;" STARTARROW="NONE" ENDARROW="DEFAULT"/>
 </node>
 </node>
 </node>

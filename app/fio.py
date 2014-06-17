@@ -16,6 +16,7 @@ CURRENT_FILE_VERSION = '0.1'
 class ProjectFileError(Exception):
     pass
 
+# Reading ######################################################################
 class MarkupReaderBase(html.parser.HTMLParser):
     '''XXX Must be documented!
     '''
@@ -256,6 +257,46 @@ class ProjectFileReader(MarkupReaderBase):
     def starttag_endtime(self, attrs):
         self.endtime = self.read_time(attrs)
     ############################################################################
+################################################################################
+
+# Writing ######################################################################
+class ProjectFileWriter:
+    def __init__(self, project, path):
+        self.class_element_mapping = {
+            timedata.Project: self.write_project,
+            timedata.SubProject: self.write_subroject,
+            timedata.WorkingDay: self.write_wday,
+            timedata.Working: self.write_working,
+            timedata.Pause: self.write_pause
+        }
+
+    # Needed to use it with a "with" statement #################################
+    def __enter__(self):
+        # ...
+        return self.__class__()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+    ############################################################################
+    
+    def close(self):
+        pass
+
+    def write_project(self):
+        pass
+    
+    def write_subroject(self):
+        pass
+    
+    def write_wday(self):
+        pass
+    
+    def write_working(self):
+        pass
+    
+    def write_pause(self):
+        pass
+################################################################################
 
 # Helper functions #############################################################
 def find_attr(attrs, name):
@@ -264,7 +305,7 @@ def find_attr(attrs, name):
             return val
     return None
 
-def write_tag(tag, *args, attrs = None, content = None):
+def write_tag(tag, *, attrs = None, content = None):
     '''Writes a tag, following the XML syntax.
     
     Parameters:

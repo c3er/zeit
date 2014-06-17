@@ -174,7 +174,10 @@ class WorkingDay(_Period):
         self.project = project
         self._date_str = None
         
-    def _get_current_period(self, cls):
+    def _get_current_period(self, cls = None):
+        if cls is None:
+            return self.periods[-1]
+        
         for p in reversed(self.periods):
             if isinstance(p, cls):
                 return p
@@ -197,19 +200,19 @@ class WorkingDay(_Period):
         return length
     
     @property
+    def current_period(self):
+        'The last appended period.'
+        return self._get_current_period()
+    
+    @property
     def current_working(self):
+        'The last appended "Working" period.'
         return self._get_current_period(Working)
     
     @property
     def current_pause(self):
+        'The last appended "Pause" period.'
         return self._get_current_period(Pause)
-    
-    @property
-    def current_period(self):
-        if self.paused:
-            return self.current_pause
-        else:
-            return self.current_working
         
     @property
     def date_str(self):
@@ -257,6 +260,7 @@ class WorkingDay(_Period):
         self.current_period.stop()
         super().stop()
 
+# XXX This object should be instanciatable without file.
 class Project(_TimeStamp):
     '''Note: The implementation needs to be instanciated from a file to work
     properly.
