@@ -1,16 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'Data structures to manage project oriented time recording.'
+"""Data structures to manage project oriented time recording."""
+
 
 import datetime
 
 import res
 
+
 class PeriodError(Exception):
     pass
 
+
 # Base classes. Shall not be instancieted directly. ############################
+
 class _TimeStamp:
     def __init__(self, starttime = None, stoptime = None):
         if starttime is None:
@@ -133,6 +137,7 @@ class _TimeStamp:
             self.stoptime = datetime.datetime.today()
             self.stopped = True
 
+
 class _Period(_TimeStamp):
     def __init__(self, working_day = None, *args, **kw):
         super().__init__(*args, **kw)
@@ -148,24 +153,29 @@ class _Period(_TimeStamp):
     @property
     def parent(self):
         return self.working_day
-        
+
+
 class _AtomicPeriod(_Period):
     'A Period that cannot have child Periods.'
     @property
     def children(self):
         return []
+
 ################################################################################
     
+
 class Working(_AtomicPeriod):
     @property
     def name(self):
         return res.PERIOD_NAME_WORKING
+
 
 class Pause(_AtomicPeriod):
     @property
     def name(self):
         return res.PERIOD_NAME_PAUSE
     
+
 class WorkingDay(_Period):
     def __init__(self, project, *args, **kw):
         super().__init__(*args, **kw)
@@ -260,6 +270,7 @@ class WorkingDay(_Period):
         self.current_period.stop()
         super().stop()
 
+
 # XXX This object should be instanciatable without file.
 class Project(_TimeStamp):
     '''Note: The implementation needs to be instanciated from a file to work
@@ -340,6 +351,7 @@ class Project(_TimeStamp):
         if not self.stopped:
             self.current_day.stop()
             self.stopped = True
+
 
 class SubProject(Project):
     def __init__(self, name, project, *args, **kw):

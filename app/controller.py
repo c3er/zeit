@@ -1,7 +1,9 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'Mediator between the GUI and the data.'
+
+"""Mediator between the GUI and the data."""
+
 
 import sys
 import os
@@ -11,10 +13,13 @@ import fio
 import res
 from misc import *
 
+
 UPDATE_TIME = 100  # milliseconds
+
 
 class UnknownPathException(Exception):
     pass
+
 
 class Controller:
     # XXX This class knows too much about the actual GUI.

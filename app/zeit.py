@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 import tkinter
 import tkinter.filedialog
 import tkinter.ttk as ttk
@@ -11,12 +12,16 @@ import res
 import res.menu
 from misc import *
 
+
 # Constants ####################################################################
+
 MIN_SIZE_X = 790
 MIN_SIZE_Y = 400
 
 PERIOD_BUTTON_WIDTH = 15
+
 ################################################################################
+
 
 # Controller object
 con = None
@@ -29,7 +34,9 @@ event_mapping = {
     '<Control-w>': lambda event: close_project(),
 }
 
+
 # Widgets of interest ##########################################################
+
 main_menu = None
 
 menu_file_new = None
@@ -41,9 +48,12 @@ menu_day_assign_subproject = None
 
 period_button = None
 day_stop_button = None
+
 ################################################################################
 
+
 # Handlers #####################################################################
+
 def adjust_state(con):
     if con.isnew:
         gui.disable(menu_file_new)
@@ -67,6 +77,7 @@ def adjust_state(con):
     else:
         period_button.config(text = res.BUTTON_PAUSE)
     
+
 def start_pause_period():
     if not con.started:
         con.start()
@@ -75,8 +86,10 @@ def start_pause_period():
     else:
         con.resume()
 
+
 def new_project():
     print('new_project')
+
 
 def open_project():
     path = tkinter.filedialog.askopenfilename(
@@ -85,11 +98,13 @@ def open_project():
     if path:
         con.open_project(path)
 
+
 def save_project():
     try:
         con.save_project()
     except controller.UnknownPathException:
         save_project_as()
+
 
 def save_project_as():
     path = tkinter.filedialog.asksaveasfilename(
@@ -100,50 +115,68 @@ def save_project_as():
             path += res.PROJECT_FILE_EXT
         con.save_project(path)
 
+
 def close_project():
     print('close_project')
+
 
 def new_subproject():
     print('new_subproject')
 
+
 def continue_subproject():
     print('continue_subproject')
+
 
 def close_subproject():
     print('close_subproject')
 
+
 def start_pause_day():
     print('start_pause_day')
+
 
 def stop_day():
     con.stop()
 
+
 def attach_day_to_subproject():
     print('attach_day_to_subproject')
+
 ################################################################################
 
+
 # Appearence and initializing ##################################################
+
 def create_main_menu(root):
     def create_file_menu(menu):
         global menu_file_new
         global menu_file_close
         file_menu = menu.add_submenu(res.menu.FILE)
         menu_file_new = file_menu.add_item(
-            res.menu.NEW_PROJECT, new_project, accelerator = 'Strg+N'
+            res.menu.NEW_PROJECT,
+            new_project,
+            accelerator='Strg+N'
         )
         file_menu.add_item(
-            res.menu.OPEN_PROJECT, open_project, accelerator = 'Strg+O'
+            res.menu.OPEN_PROJECT,
+            open_project,
+            accelerator='Strg+O'
         )
         file_menu.add_item(
-            res.menu.SAVE_PROJECT, save_project, accelerator = 'Strg+S'
+            res.menu.SAVE_PROJECT,
+            save_project,
+            accelerator='Strg+S'
         )
         file_menu.add_item(
             res.menu.SAVE_PROJECT_AS,
             save_project_as,
-            accelerator = 'Strg+Umschalt+S'
+            accelerator='Strg+Umschalt+S'
         )
         menu_file_close = file_menu.add_item(
-            res.menu.CLOSE_PROJECT, close_project, accelerator = 'Strg+W'
+            res.menu.CLOSE_PROJECT,
+            close_project,
+            accelerator='Strg+W'
         )
         file_menu.add_seperator()
         file_menu.add_item(res.STOP, root.destroy, accelerator = 'Alt+F4')
@@ -152,7 +185,10 @@ def create_main_menu(root):
         global menu_subproject_continue
         global menu_subproject_close
         subproject_menu = menu.add_submenu(res.menu.SUBPROJECT)
-        subproject_menu.add_item(res.menu.NEW_SUBPROJECT, new_subproject)
+        subproject_menu.add_item(
+            res.menu.NEW_SUBPROJECT,
+            new_subproject
+        )
         menu_subproject_continue = subproject_menu.add_item(
             res.menu.CONTINUE_SUBPROJECT,
             continue_subproject
@@ -180,6 +216,7 @@ def create_main_menu(root):
     create_day_menu(menu)
     return menu
 
+
 def toolbar(parent):
     global period_button
     global day_stop_button
@@ -190,12 +227,14 @@ def toolbar(parent):
         frame, 
         res.BUTTON_START,
         start_pause_period,
-        width = -PERIOD_BUTTON_WIDTH
+        width=(-PERIOD_BUTTON_WIDTH)
     )
     day_stop_button = gui.create_button(frame, res.BUTTON_END_DAY, stop_day)
     
     return frame
+
 ################################################################################
+
 
 def main():
     global con
@@ -217,6 +256,7 @@ def main():
     con = controller.Controller(root, adjust_state)
     
     root.mainloop()
+
 
 if __name__ == '__main__':
     main()

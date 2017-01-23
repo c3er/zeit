@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'GUI elements to use for time recording.'
+
+"""GUI elements to use for time recording."""
+
 
 import datetime
 import collections
@@ -12,9 +14,11 @@ import timedata
 import gui
 import res
 
+
 class CyclicUpdatable:
     def cyclic_update(self):
         raise NotImplementedError()
+
 
 class DisplayContainer(CyclicUpdatable):
     def __init__(self, parent, label, period):
@@ -46,6 +50,7 @@ class DisplayContainer(CyclicUpdatable):
         self.content.set(str(self.period))
         
         self.frame.pack(anchor = 'e')
+
 
 class TimeWidget(CyclicUpdatable):
     def __init__(self, parent, project):
@@ -96,6 +101,7 @@ class TimeWidget(CyclicUpdatable):
         self.frame = ttk.Frame(self.parent)
         self._build_frame()
         
+
 class ProjectWidgetItem(collections.UserList):
     '''An item for the "ProjectWidget". Basically this object consists of a list
     of the values, which shall be shown. This implementation is able to get
@@ -195,6 +201,7 @@ class ProjectWidgetItem(collections.UserList):
         else:
             raise TypeError('Value can only be a list object.')
     ############################################################################
+        
         
 class ProjectWidget(CyclicUpdatable):
     def __init__(self, parent, project):

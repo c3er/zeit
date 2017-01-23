@@ -1,7 +1,9 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''File Input/Output'''
+
+"""File Input/Output"""
+
 
 import datetime
 import html.parser
@@ -10,13 +12,17 @@ import html.entities
 import timedata
 import res
 
+
 # Use this to mark incompatibilities.
 CURRENT_FILE_VERSION = '0.1'
+
 
 class ProjectFileError(Exception):
     pass
 
+
 # Reading ######################################################################
+
 class MarkupReaderBase(html.parser.HTMLParser):
     '''XXX Must be documented!
     '''
@@ -105,6 +111,7 @@ class MarkupReaderBase(html.parser.HTMLParser):
             self.tmpdat += html.entities.entitydefs[name]
     ############################################################################
     
+
 class ProjectFileReader(MarkupReaderBase):
     def __init__(self):
         super().__init__()
@@ -257,9 +264,12 @@ class ProjectFileReader(MarkupReaderBase):
     def starttag_endtime(self, attrs):
         self.endtime = self.read_time(attrs)
     ############################################################################
+
 ################################################################################
 
+
 # Writing ######################################################################
+
 class ProjectFileWriter:
     def __init__(self, project, path):
         self.class_element_mapping = {
@@ -296,14 +306,18 @@ class ProjectFileWriter:
     
     def write_pause(self):
         pass
+
 ################################################################################
 
+
 # Helper functions #############################################################
+
 def find_attr(attrs, name):
     for attr, val in attrs:
         if attr == name:
             return val
     return None
+
 
 def write_tag(tag, *, attrs = None, content = None):
     '''Writes a tag, following the XML syntax.
@@ -331,9 +345,12 @@ def write_tag(tag, *, attrs = None, content = None):
         output += '/>\n'
     
     return output
+
 ################################################################################
 
+
 # "Public" functions ###########################################################
+
 def load(path):
     with open(path, 'rb') as f:
         file = f.read().decode('utf_8', 'ignore').strip()
@@ -345,6 +362,8 @@ def load(path):
                 error(res.FILE_READ_ERROR, exc)
     return None
 
+
 def save(project, path):
     pass
+    
 ################################################################################

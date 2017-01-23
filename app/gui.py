@@ -1,12 +1,16 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'Helper module for using Tk.'
+
+"""Helper module for using Tk."""
+
 
 import tkinter
 import tkinter.ttk as ttk
 
+
 # Menu related #################################################################
+
 class _CanDisabled:
     'Helper class to make it possible to disable/enable menu items.'
     
@@ -15,6 +19,7 @@ class _CanDisabled:
     
     def enable(self):
         self.parent.tkmenu.entryconfigure(self.label, state = 'normal')
+
 
 class Menu:
     '''Wrapper class over the tkinter.Menu class to add needed features
@@ -53,18 +58,22 @@ class Menu:
     def add_seperator(self):
         self.tkmenu.add_separator()
     
+
 class SubMenu(Menu, _CanDisabled):
     def __init__(self, label, parent, *args, **kw):
         super().__init__(*args, **kw)
         self.parent = parent
         self.label = label
     
+
 class MenuItem(_CanDisabled):
     def __init__(self, parent, label, command):
         self.parent = parent
         self.label = label
         self.command = command
+
 ################################################################################
+
 
 def disable(widget):
     if isinstance(widget, (tkinter.Button, ttk.Button)):
@@ -74,6 +83,7 @@ def disable(widget):
     else:
         raise TypeError(str(type(widget)))
 
+
 def enable(widget):
     if isinstance(widget, (tkinter.Button, ttk.Button)):
         widget.config(state = 'enabled')
@@ -82,10 +92,12 @@ def enable(widget):
     else:
         raise TypeError(str(type(widget)))
 
+
 def create_button(frame, label, command, *args, **kw):
     button = ttk.Button(frame, *args, text = label, command = command, **kw)
     button.pack(side = 'left')
     return button
+
 
 def bind_events(widget, event_mapping):
     '''Parameters:
@@ -98,7 +110,9 @@ def bind_events(widget, event_mapping):
     for event, func in event_mapping.items():
         widget.bind(event, func)
         
+
 # This stuff was originally from some demos ####################################
+
 class AutoScrollbar(ttk.Scrollbar):
     '''A scrollbar that hides it self if it's not needed.
     Only works if you use the grid geometry manager.
@@ -115,4 +129,5 @@ class AutoScrollbar(ttk.Scrollbar):
     
     def place(self, **kw):
         raise tkinter.TclError("Can not use place with this widget")
+        
 ################################################################################
