@@ -36,13 +36,13 @@ class _TimeStamp:
         self._seconds = 0
     
     def __str__(self):
-        'Needs to be implemented by inheriting classes.'
+        """Needs to be implemented by inheriting classes."""
         raise NotImplementedError()
     
     # Helper functions #########################################################
     @staticmethod
     def _split_times(t, length):
-        '''Helper function to split a great number of a period (e.g. seconds)
+        """Helper function to split a great number of a period (e.g. seconds)
         into the corresponding value of the greater period (e.g. minutes) and
         the remaining part of the given period.
         
@@ -56,7 +56,7 @@ class _TimeStamp:
             A tuple, containing two Values:
                 1. The value in the bigger period.
                 2. The remaining part of the smaller period.
-        '''
+        """
         if t >= length:
             val, t = divmod(t, length)
         else:
@@ -112,17 +112,17 @@ class _TimeStamp:
     
     @property
     def name(self):
-        'Needs to be implemented by inheriting classes.'
+        """Needs to be implemented by inheriting classes."""
         raise NotImplementedError()
     
     @property
     def parent(self):
-        'Needs to be implemented by inheriting classes.'
+        """Needs to be implemented by inheriting classes."""
         raise NotImplementedError()
     
     @property
     def children(self):
-        'Needs to be implemented by inheriting classes.'
+        """Needs to be implemented by inheriting classes."""
         raise NotImplementedError()
     ############################################################################
 
@@ -156,7 +156,7 @@ class _Period(_TimeStamp):
 
 
 class _AtomicPeriod(_Period):
-    'A Period that cannot have child Periods.'
+    """A Period that cannot have child Periods."""
     @property
     def children(self):
         return []
@@ -211,17 +211,17 @@ class WorkingDay(_Period):
     
     @property
     def current_period(self):
-        'The last appended period.'
+        """The last appended period."""
         return self._get_current_period()
     
     @property
     def current_working(self):
-        'The last appended "Working" period.'
+        """The last appended "Working" period."""
         return self._get_current_period(Working)
     
     @property
     def current_pause(self):
-        'The last appended "Pause" period.'
+        """The last appended "Pause" period."""
         return self._get_current_period(Pause)
         
     @property
@@ -273,9 +273,9 @@ class WorkingDay(_Period):
 
 # XXX This object should be instanciatable without file.
 class Project(_TimeStamp):
-    '''Note: The implementation needs to be instanciated from a file to work
+    """Note: The implementation needs to be instanciated from a file to work
     properly.
-    '''
+    """
     def __init__(self, name, *args, **kw):
         super().__init__(*args, **kw)
         self._name = None
@@ -335,7 +335,7 @@ class Project(_TimeStamp):
     ############################################################################
     
     def start(self, subproject = None):
-        'Starts a new working day of the project.'
+        """Starts a new working day of the project."""
         if self.stopped:
             self.current_day.start()
             self.started = True

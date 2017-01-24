@@ -24,8 +24,8 @@ class ProjectFileError(Exception):
 # Reading ######################################################################
 
 class MarkupReaderBase(html.parser.HTMLParser):
-    '''XXX Must be documented!
-    '''
+    """XXX Must be documented!
+    """
     def __init__(self):
         super().__init__()
         self.tmpdat = ''
@@ -53,7 +53,7 @@ class MarkupReaderBase(html.parser.HTMLParser):
     ############################################################################
     
     def _fill_tagdict(self, tag_marker):
-        '''Helper method to fill the dictionaries for handling the tags.
+        """Helper method to fill the dictionaries for handling the tags.
         
         The dictionary that is returned has the following form:
         {<tag-name1>: handler1,
@@ -65,7 +65,7 @@ class MarkupReaderBase(html.parser.HTMLParser):
         <value of tag_marker>_<name of tag>
         Every method which is named after this schema will be added to the
         dictionary as mentioned above.
-        '''
+        """
         tagdict = {}
         attrs = dir(self)
         
@@ -320,7 +320,7 @@ def find_attr(attrs, name):
 
 
 def write_tag(tag, *, attrs = None, content = None):
-    '''Writes a tag, following the XML syntax.
+    """Writes a tag, following the XML syntax.
     
     Parameters:
     - tag: Contains the name of the tag.
@@ -332,7 +332,7 @@ def write_tag(tag, *, attrs = None, content = None):
     
     Returns:
     A string, containing the written tag.
-    '''
+    """
     output = '<' + tag
     
     if attrs is not None:

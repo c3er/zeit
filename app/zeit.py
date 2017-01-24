@@ -73,9 +73,9 @@ def adjust_state(con):
         gui.enable(day_stop_button)
     
     if con.paused or not con.started:
-        period_button.config(text = res.BUTTON_START)
+        period_button.config(text=res.BUTTON_START)
     else:
-        period_button.config(text = res.BUTTON_PAUSE)
+        period_button.config(text=res.BUTTON_PAUSE)
     
 
 def start_pause_period():
@@ -93,7 +93,7 @@ def new_project():
 
 def open_project():
     path = tkinter.filedialog.askopenfilename(
-        filetypes = [(res.PROJECT_FILE_STR, res.PROJECT_FILE_EXT)]
+        filetypes=[(res.PROJECT_FILE_STR, res.PROJECT_FILE_EXT)]
     )
     if path:
         con.open_project(path)
@@ -108,7 +108,7 @@ def save_project():
 
 def save_project_as():
     path = tkinter.filedialog.asksaveasfilename(
-        filetypes = [(res.PROJECT_FILE_STR, res.PROJECT_FILE_EXT)]
+        filetypes=[(res.PROJECT_FILE_STR, res.PROJECT_FILE_EXT)]
     )
     if path:
         if not path.endswith(res.PROJECT_FILE_EXT):
@@ -248,7 +248,7 @@ def main():
     def init_gui(root):
         global main_menu
         main_menu = create_main_menu(root)
-        toolbar(root).pack(anchor = 'n', fill = 'x')
+        toolbar(root).pack(anchor='n', fill='x')
         gui.bind_events(root, event_mapping)
     
     root = init_main_window()

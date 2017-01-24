@@ -24,13 +24,13 @@ class UnknownPathException(Exception):
 class Controller:
     # XXX This class knows too much about the actual GUI.
     def __init__(self, root, state_handler):
-        '''Constructor of the "Controller" class.
+        """Constructor of the "Controller" class.
         
         Parameters:
         - root: Toplevel widget of Tk.
         - state_handler: A handler function, which updates the GUI,
           depending on the state of the controller.
-        '''
+        """
         # GUI related
         self.root = root
         self.frame = None
@@ -68,7 +68,7 @@ class Controller:
     
     # Internal helper functions ################################################
     def _basic_wrapper(self, condition, func):
-        '''A wrapper function, which calls the given function, if the given
+        """A wrapper function, which calls the given function, if the given
         condition evaluates to "True", sets the state to "modified" and updates
         the view.
         
@@ -76,7 +76,7 @@ class Controller:
         - condition: If this evaluates to "False", nothing will happen.
         - func: A function object, which will be called only, if the condition
           evaluates to "True".
-        '''
+        """
         if condition:
             func()
             self._modified = True
@@ -84,7 +84,7 @@ class Controller:
             self.update()
             
     def _ext_wrapper(self, condition, func, period, name):
-        '''Like the basic wrapper, but additionally it assigns to the display
+        """Like the basic wrapper, but additionally it assigns to the display
         with the given name another period object.
         
         Parameters:
@@ -95,7 +95,7 @@ class Controller:
           display.
         - name: The name of the display, which will have assigned another
           "Period" object.
-        '''
+        """
         if condition:
             func()
             self.time_widget[name].period = period
@@ -118,17 +118,17 @@ class Controller:
         
         self.project_widget = timegui.ProjectWidget(self.frame, project)
         self.project_widget.frame.pack(
-            side = 'left',
-            fill = 'both',
-            expand = True
+            side='left',
+            fill='both',
+            expand=True
         )
         self._register_cyclic_handler(self.project_widget)
         
         self.time_widget = timegui.TimeWidget(self.frame, project)
-        self.time_widget.frame.pack(side = 'left', anchor = 'n')
+        self.time_widget.frame.pack(side = 'left', anchor='n')
         self._register_cyclic_handler(self.time_widget)
         
-        self.frame.pack(fill = 'both', expand = True)
+        self.frame.pack(fill='both', expand=True)
         self.frame.after(UPDATE_TIME, self.cyclic_update)
     ############################################################################
     
@@ -145,7 +145,9 @@ class Controller:
         
     # Interface functions for the GUI handler ##################################
     def new_project(self):
-        'Loads a default file, containing an empty project and updates the GUI.'
+        """Loads a default file, containing an empty project
+        and updates the GUI.
+        """
         path = os.path.join(sys.path[0], res.DEFAULT_FILE)
         self.project = fio.load(path)
         self._build_frame(self.root, self.project)

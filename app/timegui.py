@@ -38,18 +38,19 @@ class DisplayContainer(CyclicUpdatable):
     def update(self):
         if self.frame is not None:
             self.frame.destroy()
-        self.frame = ttk.Labelframe(self.parent, text = self.label)
+        self.frame = ttk.Labelframe(self.parent, text=self.label)
         
         self.content = tkinter.StringVar()
-        tkinter.Label(self.frame,
-            background = 'black',
-            foreground = 'yellow',
-            font = ('Consolas', 20, 'bold'),
-            textvariable = self.content
+        tkinter.Label(
+            self.frame,
+            background='black',
+            foreground='yellow',
+            font=('Consolas', 20, 'bold'),
+            textvariable=self.content
         ).pack()
         self.content.set(str(self.period))
         
-        self.frame.pack(anchor = 'e')
+        self.frame.pack(anchor='e')
 
 
 class TimeWidget(CyclicUpdatable):
@@ -73,19 +74,13 @@ class TimeWidget(CyclicUpdatable):
         pause = day.current_pause
         
         if not self.displays:
-            self.displays.append(
-                DisplayContainer(self.frame, res.DISPLAY_PERIOD, working)
-            )
-            self.displays.append(
-                DisplayContainer(self.frame, res.DISPLAY_PAUSE, pause)
-            )
+            self.displays.append(DisplayContainer(self.frame, res.DISPLAY_PERIOD, working))
+            self.displays.append(DisplayContainer(self.frame, res.DISPLAY_PAUSE, pause))
             self.displays.append(DisplayContainer(self.frame, res.DAY, day))
             
             project = day.project
             while project is not None:
-                self.displays.append(
-                    DisplayContainer(self.frame, project.name, project)
-                )
+                self.displays.append(DisplayContainer(self.frame, project.name, project))
                 project = project.parent_project
         else:
             for d in self.displays:
@@ -103,13 +98,13 @@ class TimeWidget(CyclicUpdatable):
         
 
 class ProjectWidgetItem(collections.UserList):
-    '''An item for the "ProjectWidget". Basically this object consists of a list
+    """An item for the "ProjectWidget". Basically this object consists of a list
     of the values, which shall be shown. This implementation is able to get
     access to the current values of the actual item, not just the values of
     creation time of an instance of this class.
-    '''
+    """
     def __init__(self, item, item_name, values):
-        '''Parameters:
+        """Parameters:
             - item: An item, which must be a subclass of "_TimeStemp".
             - item_name: Name of the item. Must be identical to the name, which
               is used in the "values".
@@ -119,7 +114,7 @@ class ProjectWidgetItem(collections.UserList):
               of the item instead of the values of creation time of this object.
               Note: The count of the values list must be identical to the column
               count of the ProjectWidget, to which this object belongs to.
-        '''
+        """
         super().__init__()
         
         self.children = []
@@ -145,9 +140,7 @@ class ProjectWidgetItem(collections.UserList):
             if isinstance(item, str):
                 result.append(item)
             else:
-                raise TypeError(
-                    'Values must be strings, containing valid Python code.'
-                )
+                raise TypeError('Values must be strings, containing valid Python code.')
         return result
     
     def _link2parent(self, item):
@@ -158,9 +151,7 @@ class ProjectWidgetItem(collections.UserList):
         if itemparent is None:
             return None
         elif not hasattr(itemparent, 'widget_ref'):
-            raise AttributeError(
-                'Parent of item is not assigned to a "ProjectWidgetItem" yet.'
-            )
+            raise AttributeError('Parent of item is not assigned to a "ProjectWidgetItem" yet.')
         else:
             parent = itemparent.widget_ref
             parent.children.append(self)
@@ -240,34 +231,28 @@ class ProjectWidget(CyclicUpdatable):
     def _build_treeview(parent, project, event_mapping):
         
         def setup_columns(tree, columns):
-            tree.heading('#0', text = res.PROJECT_COLUMN_NAME, anchor = 'w')
+            tree.heading('#0', text = res.PROJECT_COLUMN_NAME, anchor='w')
             for col in columns:
-                tree.heading(col, text = col, anchor = 'w')
-                tree.column(col, width = 100)
+                tree.heading(col, text=col, anchor='w')
+                tree.column(col, width=100)
                 
         def setup_scrollbars(parent, tree):
-            vsb = gui.AutoScrollbar(parent,
-                orient = "vertical",
-                command = tree.yview
-            )
-            hsb = gui.AutoScrollbar(parent,
-                orient = "horizontal",
-                command = tree.xview
-            )
-            tree.configure(yscrollcommand = vsb.set, xscrollcommand = hsb.set)
-            tree.grid(column = 0, row = 0, sticky = 'nsew', in_ = parent)
-            vsb.grid(column = 1, row = 0, sticky = 'ns')
-            hsb.grid(column = 0, row = 1, sticky = 'ew')
+            vsb = gui.AutoScrollbar(parent, orient="vertical", command=tree.yview)
+            hsb = gui.AutoScrollbar(parent, orient = "horizontal", command = tree.xview)
+            tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+            tree.grid(column=0, row=0, sticky='nsew', in_=parent)
+            vsb.grid(column=1, row=0, sticky='ns')
+            hsb.grid(column=0, row=1, sticky='ew')
     
-            parent.grid_columnconfigure(0, weight = 1)
-            parent.grid_rowconfigure(0, weight = 1)
+            parent.grid_columnconfigure(0, weight=1)
+            parent.grid_rowconfigure(0, weight=1)
             
         columns = (
             res.PROJECT_COLUMN_FROM,
             res.PROJECT_COLUMN_UNTIL,
             res.PROJECT_COLUMN_DURATION
         )
-        tree = ttk.Treeview(columns = columns)
+        tree = ttk.Treeview(columns=columns)
         
         setup_columns(tree, columns)
         setup_scrollbars(parent, tree)
@@ -279,10 +264,12 @@ class ProjectWidget(CyclicUpdatable):
     
     def _insert_item(self, timestamp, tkparent):
         item = ProjectWidgetItem(timestamp, 'stamp', self.timestamp_values)
-        node = self.treeview.insert(tkparent, 'end',
-            text = timestamp.name,
-            values = tuple(item),
-            open = True
+        node = self.treeview.insert(
+            tkparent,
+            'end',
+            text=timestamp.name,
+            values=tuple(item),
+            open=True
         )
         return item, node
     
@@ -306,14 +293,12 @@ class ProjectWidget(CyclicUpdatable):
             lastcalled = item.lastcalled
             itemdata = tuple(item)
             if itemdata != lastcalled:
-                self.treeview.item(node, values = itemdata)
+                self.treeview.item(node, values=itemdata)
     
     def add_item(self, period):
         parent = period.parent
         if parent is None:
-            raise ValueError(
-                '"period" must be a subelement of an existing item.'
-            )
+            raise ValueError('"period" must be a subelement of an existing item.')
 
         parent_item = parent.widget_ref
         for child in parent_item.children:
